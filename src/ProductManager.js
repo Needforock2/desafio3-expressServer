@@ -94,47 +94,4 @@ export default class ProductManager {
     }
   };
 }
-//const manager = new ProductManager("src/products.json");
-
-/* const audi = {
-  title: "audi",
-  description: "a3",
-  price: 50000,
-  thumbnail: "www.audi.com",
-  code: 505,
-  stock: 1,
-};
-const toyota = {
-  title: "toyota",
-  description: "hilux",
-  price: 20000,
-  thumbnail: "www.hilux.com",
-  code: 506,
-  stock: 10,
-};
-
-const toyotaToEdit = {
-  description: "FJ40",
-  thumbnail: "www.fj40.com",
-  code: 1000,
-}; */
-
-/* const env = async () => {
-  const products = await manager.getProducts();
-  console.log("todos los productos en el archivo", products); */
-
- /*  await manager.addProduct(audi)
-  await manager.addProduct(toyota)
-  const search = await manager.getProductById(1);
-  console.log("busqueda por id 1", search);
-  const search1 = await manager.getProductById(4);
-  console.log("busqueda por id 2", search1);
-
-  await manager.updateProduct(2, toyotaToEdit);
-
-  await manager.deleteProduct(4); //eliminar producto equivocado
-  await manager.deleteProduct(2); //eliminar producto 
-};
-
-env();*/
 
