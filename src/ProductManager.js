@@ -21,23 +21,25 @@ export default class ProductManager {
   };
 
   addProduct = async (product) => {
+   
     try {
       const products = await this.getProducts();
       if (
         !product.title ||
         !product.description ||
         !product.price ||
-        !product.thumbnail ||
+        //!product.thumbnail ||
         !product.stock ||
-        !product.code
+        !product.code ||
+        !product.status
       ) {
         console.log("invalid product information, please check all properties");
-        return;
+        return { status: "error", message: "invalid product information, please check all properties" };
       }
 
       if (products.find((item) => item.code === product.code)) {
-        console.log("this product already exists");
-        return;
+       
+        return { status: "error", message: "this product already exists" }
       }
 
       const productToAdd = {
@@ -46,6 +48,7 @@ export default class ProductManager {
       };
       products.push(productToAdd);
       await promises.writeFile(this.path, JSON.stringify(products, null, "\t"));
+      return { status: "success", message: "product created" };
     } catch (err) {
       console.log(err);
     }
@@ -54,7 +57,9 @@ export default class ProductManager {
   getProductById = async (id) => {
     const productsInFile = await this.getProducts();
     const search = productsInFile.find((item) => item.id === id);
-    return search ? search : "Product not found";
+    return search
+      ? search
+      : { status: "error", message: "product not found" };
   };
 
   saveToFile = async (productsToSave) => {
@@ -65,17 +70,15 @@ export default class ProductManager {
     );
   };
   updateProduct = async (id, modificacion) => {
-    const productToEdit = await this.getProductById(id); // buscamos el producto a editar por ID
+    const productToEdit = await this.getProductById(id);
+    console.log(productToEdit) // buscamos el producto a editar por ID
     const productsArray = await this.getProducts(); // traemos el array desde el archivo
     const index = productsArray.findIndex((obj) => obj.id === id); // buscamos en el array el indice del objeto a modificar
     Object.assign(productToEdit, modificacion); //hacemos las modificaciones del objeto
     productsArray[index] = productToEdit; // y lo metemos en el array
 
     await this.saveToFile(productsArray); // y guardamos el array en el archivo
-    console.log(
-      "lista de productos despues de modificar un objeto",
-      productsArray
-    );
+    return { status: "success", message: "product modified" };
   };
 
   deleteProduct = async (id) => {
@@ -85,12 +88,9 @@ export default class ProductManager {
       productsArray.splice(index, 1);
 
       await this.saveToFile(productsArray); // y lo guardamos en el archivo
-      console.log(
-        "lista de productos despues de eliminar un objeto",
-        productsArray
-      );
+      return { status: "success", message: "product deleted" };
     } else {
-      console.log("Articulo no encontrado, no se puede eliminar");
+      return { status: "error", message: "product not found" };
     }
   };
 }
