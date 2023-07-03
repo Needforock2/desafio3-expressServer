@@ -1,5 +1,7 @@
 import * as fs from "fs";
 import { promises } from "fs";
+import ProductManager from "./ProductManager.js";
+
 
 export default class CartManager {
   constructor(path) {
@@ -44,6 +46,7 @@ export default class CartManager {
   };
 
   addProductToCart = async (pid, cid) => {
+    const productsManager = new ProductManager("src/products.json");
     try {
       const carts = await this.getCarts();
       const productsInCart = await this.getCartById(cid);
@@ -51,22 +54,33 @@ export default class CartManager {
         return productsInCart;
       } else {
         const cartIndex = carts.findIndex((obj) => obj.id === cid);
-        if (productsInCart.filter((item) => item.product === pid).length > 0) {
-          productsInCart.map((item) => {
-            if (item.product === pid) {
-              item.quantity += 1;
-            }
-          });
-        } else {
-          productsInCart.push({
-            product: pid,
-            quantity: 1,
-          });
+        //verificamos si el producto existe en archivo ---->
+        const productsInDB = await productsManager.getProducts();
+        if (productsInDB.filter((item) => item.id === pid).length > 0) {
+          // <---- verificamos si el producto existe en archivo
+          if (
+            productsInCart.filter((item) => item.product === pid).length > 0
+          ) {
+            productsInCart.map((item) => {
+              if (item.product === pid) {
+                item.quantity += 1;
+              }
+            });
+          } else {
+            productsInCart.push({
+              product: pid,
+              quantity: 1,
+            });
+          }
+          carts[cartIndex].products = productsInCart;
+          await promises.writeFile(
+            this.path,
+            JSON.stringify(carts, null, "\t")
+          );
+          return { status: "success", message: "product added to cart" };
+        } else { //sino existe mandamos un error
+          return { status: "error", message: "product does not exist" };
         }
-
-        carts[cartIndex].products = productsInCart;
-        await promises.writeFile(this.path, JSON.stringify(carts, null, "\t"));
-        return { status: "success", message: "product added to cart" };
       }
     } catch (err) {
       console.log(err);
