@@ -2,7 +2,6 @@ import * as fs from "fs";
 import { promises } from "fs";
 import ProductManager from "./ProductManager.js";
 
-
 export default class CartManager {
   constructor(path) {
     this.path = path;
@@ -46,7 +45,7 @@ export default class CartManager {
   };
 
   addProductToCart = async (pid, cid) => {
-    const productsManager = new ProductManager("src/products.json");
+    const productsManager = new ProductManager("src/files/products.json");
     try {
       const carts = await this.getCarts();
       const productsInCart = await this.getCartById(cid);
@@ -78,7 +77,8 @@ export default class CartManager {
             JSON.stringify(carts, null, "\t")
           );
           return { status: "success", message: "product added to cart" };
-        } else { //sino existe mandamos un error
+        } else {
+          //sino existe mandamos un error
           return { status: "error", message: "product does not exist" };
         }
       }
@@ -87,37 +87,34 @@ export default class CartManager {
     }
   };
 
-    // de aqui para abajo posiblemente se use mas adelante
-
-  /* saveToFile = async (productsToSave) => {
-    const data = JSON.stringify(productsToSave, null, 2);
+  saveToFile = async (cartsToSave) => {
     await promises.writeFile(
       this.path,
-      JSON.stringify(productsToSave, null, "\t")
+      JSON.stringify(cartsToSave, null, "\t")
     );
   };
-  updateProduct = async (id, modificacion) => {
-    const productToEdit = await this.getProductById(id);
-    console.log(productToEdit); // buscamos el producto a editar por ID
-    const productsArray = await this.getProducts(); // traemos el array desde el archivo
-    const index = productsArray.findIndex((obj) => obj.id === id); // buscamos en el array el indice del objeto a modificar
-    Object.assign(productToEdit, modificacion); //hacemos las modificaciones del objeto
-    productsArray[index] = productToEdit; // y lo metemos en el array
 
-    await this.saveToFile(productsArray); // y guardamos el array en el archivo
-    return { status: "success", message: "product modified" };
+  deleteProductFromCart = async (pid, cid) => {
+    try {
+      const productsInCart = await this.getCartById(cid);
+      const carts = await this.getCarts();
+      const productIndex = productsInCart.findIndex(
+        (item) => item.product === pid
+      );
+      if (productIndex > -1) {
+        productsInCart.splice(productIndex, 1);
+
+        carts.map((cart) => {
+          if (cart.id === cid) {
+            cart.products = productsInCart;
+          }
+        });
+
+        await this.saveToFile(carts);
+        return { status: "success", message: "product deleted" };
+      } else {
+        return { status: "error", message: "product not found" };
+      }
+    } catch (error) {}
   };
-
-  deleteProduct = async (id) => {
-    const productsArray = await this.getProducts(); // traemos el array desde el archivo
-    const index = productsArray.findIndex((obj) => obj.id === id); // buscamos en el array el indice del objeto a eliminar
-    if (index > -1) {
-      productsArray.splice(index, 1);
-
-      await this.saveToFile(productsArray); // y lo guardamos en el archivo
-      return { status: "success", message: "product deleted" };
-    } else {
-      return { status: "error", message: "product not found" };
-    }
-  }; */
 }

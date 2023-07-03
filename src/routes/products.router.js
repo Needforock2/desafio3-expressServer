@@ -1,9 +1,9 @@
 import { Router } from "express";
-import ProductManager from "../ProductManager.js";
+import ProductManager from "../managers/ProductManager.js";
 
 
 
-const manager = new ProductManager("src/products.json");
+const manager = new ProductManager("src/files/products.json");
 const router = Router()
 
 
@@ -21,7 +21,7 @@ router.get("/:pid", async (req, res) => {
 
 router.post("/", async (req, res) => {
     const product = req.body
-    console.log("producto", product)
+
     const result = await manager.addProduct(product)
     if (result.status === "error") {
         return res.status(400).send(result);
