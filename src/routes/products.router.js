@@ -1,6 +1,6 @@
 import { Router } from "express";
 import ProductManager from "../managers/ProductManager.js";
-
+import { io } from "../app.js";
 
 
 const manager = new ProductManager("src/files/products.json");
@@ -26,6 +26,8 @@ router.post("/", async (req, res) => {
     if (result.status === "error") {
         return res.status(400).send(result);
     } else {
+      io.emit('message', result.products)
+      //console.log("deberia emitir aqui")
         return res.status(200).send(result);
     }
     
@@ -44,6 +46,7 @@ router.delete("/:pid", async (req, res) => {
     if (result.status === "error") {
       return res.status(400).send(result);
     } else {
+      io.emit("message", result.products);
       return res.status(200).send(result);
     }
 })

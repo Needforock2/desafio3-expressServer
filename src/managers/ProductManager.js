@@ -48,7 +48,7 @@ export default class ProductManager {
       };
       products.push(productToAdd);
       await promises.writeFile(this.path, JSON.stringify(products, null, "\t"));
-      return { status: "success", message: "product created" };
+      return { status: "success", message: "product created", products };
     } catch (err) {
       console.log(err);
     }
@@ -88,7 +88,7 @@ export default class ProductManager {
       productsArray.splice(index, 1);
 
       await this.saveToFile(productsArray); // y lo guardamos en el archivo
-      return { status: "success", message: "product deleted" };
+      return { status: "success", message: "product deleted", products: productsArray };
     } else {
       return { status: "error", message: "product not found" };
     }

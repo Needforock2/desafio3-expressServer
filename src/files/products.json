@@ -88,23 +88,5 @@
 		"stock": 6,
 		"id": 9,
 		"status": true
-	},
-	{
-		"title": "Audi sdf",
-		"description": "Compact luxury sedan",
-		"price": 50000,
-		"code": 65,
-		"stock": 1,
-		"status": true,
-		"id": 10
-	},
-	{
-		"title": "sdfsdf",
-		"description": "Compact luxury sedan",
-		"price": 50000,
-		"code": 64445,
-		"stock": 1,
-		"status": true,
-		"id": 11
 	}
 ]

@@ -1,0 +1,1 @@
+console.log("vista estatica de los productos")
