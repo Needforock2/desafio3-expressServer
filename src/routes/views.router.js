@@ -19,6 +19,12 @@ router.get("/realtimeproducts", async (req, res) => {
   res.render("realTimeProducts")
 });
 
+router.get("/realtime-cart/:cid", async (req, res) => {
+  const {cid} = req.params
+    res.render("realTimeCart", {cartid: cid});
+
+});
+
 
 
 export default router;
