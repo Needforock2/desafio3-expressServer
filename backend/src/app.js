@@ -17,11 +17,23 @@ const ready = () => {
   )
     .then(() => {
       console.log("database connected");
+
     })
     .catch((err) => console.log(err));
 };
 
 const app = express();
+
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173"); // Reemplaza con tu origen
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -42,6 +54,7 @@ app.use("/api/carts", cartsRouterDB);
 app.use("/", viewsRouter);
 
 const server = app.listen(PORT, ready);
+
 
 export const io = new Server(server);
  const fetchCart = async (cid) => {

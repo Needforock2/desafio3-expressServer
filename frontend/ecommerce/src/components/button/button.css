@@ -1,0 +1,13 @@
+.btn{
+   /*  background-color: #F0F2F0; */
+    border: none;
+    font-size: 1.7rem;
+  }
+
+  .btn-outline-primary{
+    border: solid 1px;
+    /* background-color: white; */
+  }
+  .bckg-color-primary{
+    background-color:#F0F2F0;
+  }
