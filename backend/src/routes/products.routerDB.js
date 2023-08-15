@@ -21,10 +21,70 @@ router.post("/", async (req, res, next) => {
 
 //READ ALL
 router.get("/", async (req, res, next) => {
+  const { limit, page, query, title, sort } = req.query;
+
+  const options = {
+    limit: limit ? limit : 6,
+    page: page ? page : 1,
+    sort: sort ? { price: sort } : {},
+  };
+
+  let queryObject = {};
+  let queryType;
+  let queryValue;
+  let queryStock;
+  if (query) {
+    const querySplitted = query.split("=");
+    queryType = querySplitted[0] ? querySplitted[0] : null;
+    queryValue = querySplitted[1] ? querySplitted[1] : null;
+
+    if (queryType === "stock") {
+      queryStock = { $gte: queryValue };
+      queryObject[queryType] = queryStock;
+    } else {
+      queryObject[queryType] = queryValue;
+    }
+  }
+   if (title) {
+      queryObject["title"]= { $regex: title, $options: "i"}
+    }
+  
+
   try {
-    const products = await Product.find();
-    let { limit } = req.query;
-    return limit ? res.send(products.slice(0, limit)) : res.send(products);
+    const products = await Product.paginate(query || title ? queryObject : {}, options);
+    const {
+      docs,
+      limit,
+      totalPages,
+      page,
+      hasPrevPage,
+      hasNextPage,
+      prevPage,
+      nextPage,
+    } = products;
+    let nextLink = hasNextPage
+      ? `http://localhost:8080/api/products?limit=${limit}&page=${nextPage}${
+          sort ? `&sort=${sort}` : ""
+        }${query ? `&query=${queryType}=${queryValue}` : ""}`
+      : null;
+    let prevLink = hasPrevPage
+      ? `http://localhost:8080/api/products?limit=${limit}&page=${prevPage}${
+          sort ? `&sort=${sort}` : ""
+        }${query ? `&query=${queryType}=${queryValue}` : ""}`
+      : null;
+
+    return res.status(200).json({
+      status: "success",
+      payload: docs,
+      totalPages,
+      prevPage,
+      nextPage,
+      page,
+      hasPrevPage,
+      hasNextPage,
+      nextLink,
+      prevLink,
+    });
   } catch (error) {
     next(error);
   }
@@ -52,12 +112,12 @@ router.put("/:pid", async (req, res, next) => {
     let one = await Product.findByIdAndUpdate(pid, data);
     return res.status(200).json({
       success: true,
-      message: `movie id: ${one._id} modified`,
+      message: `product id: ${one._id} modified`,
     });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      message: `movie id: ${pid} not found`,
+      message: `product id: ${pid} not found`,
     });
   }
 });
