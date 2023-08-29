@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { io } from "../app.js";
 import Product from "../dao/models/product.js";
+import auth from "../middlewares/auth.js";
+import is_admin from "../middlewares/is_admin.js";
 
 const router = Router();
 
 //CREATE
-router.post("/", async (req, res, next) => {
+router.post("/", is_admin, async (req, res, next) => {
   try {
     const product = req.body;
     let one = await Product.create(product);
@@ -22,7 +24,7 @@ router.post("/", async (req, res, next) => {
 //READ ALL
 router.get("/", async (req, res, next) => {
   const { limit, page, query, title, sort } = req.query;
-
+  console.log(req.session)
   const options = {
     limit: limit ? limit : 6,
     page: page ? page : 1,

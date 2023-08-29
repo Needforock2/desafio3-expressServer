@@ -1,6 +1,6 @@
-import { Flex, Heading, Box } from "@chakra-ui/react";
+import { Flex, Heading} from "@chakra-ui/react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ProductCardCart from "./ProductCardCart";
 import OrderSummary from "./OrderSummary";
 
@@ -59,7 +59,7 @@ export default function Cart() {
         const cid = sessionStorage.getItem("cid");
         try {
           const url = `http://localhost:8080/api/carts/${cid}/products/${pid}`;
-          const resp = await axios.put(url, body);
+          await axios.put(url, body);
           setUpdated(true);
         } catch (error) {
           console.log(error);

@@ -92,7 +92,7 @@ export default function ProductContainer() {
 
   return (
       <>
-          <Box m='40px auto' maxW='20%'>
+          <Box m='40px auto' maxW='40%'>
           <SearchBar handleSearch={(search)=>handleSearch(search)}/>
               
           </Box>
