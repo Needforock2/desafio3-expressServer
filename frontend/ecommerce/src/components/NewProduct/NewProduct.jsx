@@ -1,13 +1,13 @@
 import {
-  Box,
   Button,
+  Card,
   FormLabel,
   Heading,
   Input,
   Textarea,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useState } from "react";
+import { useState } from "react";
 import swal from "sweetalert";  
 
 function NewProduct() {
@@ -29,13 +29,13 @@ function NewProduct() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Aquí puedes hacer algo con los datos del formulario, como enviarlos a una API
-      console.log(productData);
+  
       const url = "http://localhost:8080/api/products";
       try {
-          const resp = await axios.post(url, productData)
+          const resp = await axios.post(url, productData,{ withCredentials: true })
           if (resp.data.status === "success") {
               swal({
-                title: "Exito",
+                title: "Éxito",
                 text: "Producto Creado",
                 icon: "success",
               });
@@ -51,12 +51,16 @@ function NewProduct() {
             category: "",
           });
       } catch (error) {
-        console.log(error)
+         swal({
+           title: "Error",
+           text: "No tienes permiso",
+           icon: "warning",
+         });
       }
   };
 
   return (
-    <Box maxW="50vw" m="20px auto">
+    <Card maxW="50vw" m="20px auto" p={10}>
       <Heading>Crear Producto</Heading>
       <form onSubmit={handleSubmit}>
         <FormLabel>
@@ -137,7 +141,7 @@ function NewProduct() {
         <br />
         <Button type="submit">Submit</Button>
       </form>
-    </Box>
+    </Card>
   );
 }
 
