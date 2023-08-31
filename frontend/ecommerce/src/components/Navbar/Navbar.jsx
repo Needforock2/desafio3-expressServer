@@ -17,6 +17,8 @@ import axios from "axios";
 import swal from "sweetalert";
 import { Register } from "../Register/Register";
 
+axios.defaults.withCredentials = true;
+
 export const NavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [session, setSession] = useState(false);
@@ -28,6 +30,7 @@ export const NavBar = () => {
 
   function getCookie(name) {
     const value = `; ${document.cookie}`;
+    console.log(document.cookie);
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) {
       return parts.pop().split(";").shift();
@@ -43,6 +46,7 @@ export const NavBar = () => {
     } else {
       setSession(false);
     }
+    console.log(session)
   }, [session]);
 
   useEffect(() => {
@@ -79,11 +83,11 @@ export const NavBar = () => {
         <Flex gap={10} justifyContent="center" alignItems="center">
           <NavLink to={`/new_product`}>Crear Producto</NavLink>
           <CartWidget />
-          {session ? (
+       
             <NavLink onClick={handleLogout}>Logout</NavLink>
-          ) : (
+    
             <NavLink onClick={onOpen}>Login</NavLink>
-          )}
+
         </Flex>
         <Modal isOpen={isOpen} onClose={onClose}>
           {/* //login */}

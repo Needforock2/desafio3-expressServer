@@ -19,7 +19,7 @@ import axios from "axios";
 import { useRef, useState } from "react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import swal from "sweetalert";
-
+axios.defaults.withCredentials = true;
 
 export const Login = ({ successLogin, handleRegister }) => {
   const [loginData, setLoginData] = useState("");
@@ -43,7 +43,7 @@ export const Login = ({ successLogin, handleRegister }) => {
     e.preventDefault();
     const url = "http://localhost:8080/api/auth/login";
     try {
-      const resp = await axios.post(url, loginData, { withCredentials: true });
+      const resp = await axios.post(url, loginData);
       console.log(resp);
       successLogin();
       swal({
