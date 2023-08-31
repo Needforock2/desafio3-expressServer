@@ -43,10 +43,10 @@ auth_router.post('/login', is_8_char, is_valid_user, async(req, res, next) => {
 
 //logout
 
-auth_router.post('/logout', async(req, res, next) => {
+auth_router.post('/logout', (req, res, next) => {
     try {
+        console.log(req.session)
       req.session.destroy();
-      res.cookie("connect.sid", "", { expires: new Date(0) });
       return res.status(200).json({
         success: true,
         message: "sesion cerrada",
