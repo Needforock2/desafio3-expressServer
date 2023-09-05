@@ -13,13 +13,14 @@ import {
   InputRightElement,
   IconButton,
   useDisclosure,
+  Flex,
 
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRef, useState } from "react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import swal from "sweetalert";
-
+axios.defaults.withCredentials = true;
 
 export const Login = ({ successLogin, handleRegister }) => {
   const [loginData, setLoginData] = useState("");
@@ -39,12 +40,35 @@ export const Login = ({ successLogin, handleRegister }) => {
     setLoginData({ ...loginData, [name]: value });
   };
 
+  const handleGitHub = async (e) => {
+    e.preventDefault();
+    const popup = window.open(
+      "http://localhost:8080/api/auth/github",
+      "targetWindow",
+      `toolbar=no, location=no, status=no, menubar=no,scrollbars=yes,resizable=yes, width=620, height=700`
+    );
+    window.addEventListener("message", (event) => {
+      if (event.data.token) {
+        sessionStorage.setItem("token", event.data.token);
+        popup?.close();
+        successLogin();
+        swal({
+          title: "Exito",
+          text: `${event.data.mail} inició sesión`,
+          icon: "success",
+        });
+      } 
+      
+    })
+
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = "http://localhost:8080/api/auth/login";
     try {
-      const resp = await axios.post(url, loginData, { withCredentials: true });
-      console.log(resp);
+      const resp = await axios.post(url, loginData);
+      sessionStorage.setItem("token", resp.data.session.token)
       successLogin();
       swal({
         title: "Exito",
@@ -83,7 +107,7 @@ export const Login = ({ successLogin, handleRegister }) => {
           >
             <Text color="fg.muted">
               No tienes una Cuenta?{" "}
-              <Link onClick={()=>handleRegister(true)}>Regístrate</Link>
+              <Link onClick={() => handleRegister(true)}>Regístrate</Link>
             </Text>
           </Stack>
         </Stack>
@@ -143,6 +167,14 @@ export const Login = ({ successLogin, handleRegister }) => {
               <Button onClick={(e) => handleSubmit(e)} bgColor={"blue.500"}>
                 Iniciar Sesión
               </Button>
+            </Stack>
+            <Flex justifyContent='center'>
+            <Text>ó</Text>
+
+            </Flex>
+            <Stack spacing="6">
+              
+              <Button onClick={(e) => handleGitHub(e)}>Continuar con Github</Button>
             </Stack>
           </Stack>
         </Box>

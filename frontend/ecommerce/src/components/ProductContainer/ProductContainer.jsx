@@ -6,7 +6,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import Pagination from "../Pagination/Pagination";
 import SearchBar from "../SearchBar/SearchBar";
 import NoSearchResults from "../NoSearchResults/NoSearchResults";
-
+axios.defaults.withCredentials = true;
 
 export default function ProductContainer() {
   const [products, setProducts] = useState([]);
