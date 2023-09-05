@@ -3,14 +3,7 @@ import {
   IconButton,
   Input,
   InputGroup,
-  InputLeftElement,
-  useTheme,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalBody,
   Flex,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 

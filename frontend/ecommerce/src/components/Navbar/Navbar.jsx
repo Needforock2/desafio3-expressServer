@@ -28,20 +28,20 @@ export const NavBar = () => {
     onClose();
   };
 
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    console.log(document.cookie);
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-      return parts.pop().split(";").shift();
-    }
-  }
   const handleRegister = () => {
     setRegister(!register);
   };
 
+  const getToken = () => {
+    const token = sessionStorage.getItem("token");
+    return token;
+  };
+  const resetSessionStore = () => {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("cid");
+  };
   useEffect(() => {
-    if (getCookie("connect.sid")) {
+    if (getToken()) {
       setSession(true);
     } else {
       setSession(false);
@@ -57,13 +57,13 @@ export const NavBar = () => {
     const url = "http://localhost:8080/api/auth/logout";
     try {
       const resp = await axios.post(url);
-      console.log(resp);
       swal({
         title: "Exito",
         text: resp.data.message,
         icon: "success",
       });
       setSession(false);
+      resetSessionStore();
     } catch (error) {
       swal({
         title: "Error",
@@ -81,16 +81,17 @@ export const NavBar = () => {
           </NavLink>
         </div>
         <Flex gap={10} justifyContent="center" alignItems="center">
-          <NavLink to={`/new_product`}>Crear Producto</NavLink>
-          <CartWidget />
-       
-            <NavLink onClick={handleLogout}>Logout</NavLink>
-    
+          {session ? (
+            <>
+              <NavLink to={`/new_product`}>Crear Producto</NavLink>
+              <NavLink onClick={handleLogout}>Logout</NavLink>
+            </>
+          ) : (
             <NavLink onClick={onOpen}>Login</NavLink>
-
+          )}
+          <CartWidget />
         </Flex>
         <Modal isOpen={isOpen} onClose={onClose}>
-          {/* //login */}
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>

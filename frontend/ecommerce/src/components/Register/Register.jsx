@@ -12,11 +12,13 @@ import {
   InputRightElement,
   IconButton,
   useDisclosure,
+  Spacer,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRef, useState } from "react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import swal from "sweetalert";
+axios.defaults.withCredentials = true;
 
 export const Register = ({ successLogin, handleRegister }) => {
   const [loginData, setLoginData] = useState("");
@@ -40,7 +42,7 @@ export const Register = ({ successLogin, handleRegister }) => {
     e.preventDefault();
     const url = "http://localhost:8080/api/auth/register";
     try {
-      const resp = await axios.post(url, loginData, { withCredentials: true });
+      const resp = await axios.post(url, loginData);
       console.log(resp);
       successLogin();
       swal({
@@ -162,6 +164,7 @@ export const Register = ({ successLogin, handleRegister }) => {
                 Registrarte
               </Button>
             </Stack>
+            
           </Stack>
         </Box>
       </Stack>

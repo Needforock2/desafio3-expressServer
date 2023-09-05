@@ -16,6 +16,8 @@ import sessions_router from "./routes/sessions.router.js";
 import sessionFileStore from "session-file-store";
 import MongoStore from "connect-mongo";
 import auth_router from "./routes/auth.router.js";
+import passport from "passport";
+import inicializePassport from "./middlewares/passport.js";
 
 const PORT = 8080;
 const ready = () => {
@@ -34,14 +36,13 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
 
 app.use(cookieParser(process.env.SECRET_COOKIE));
-const FileStore = sessionFileStore(expressSession);
 app.use(
   expressSession({
     store: MongoStore.create({
@@ -54,6 +55,9 @@ app.use(
   })
 );
 
+inicializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));

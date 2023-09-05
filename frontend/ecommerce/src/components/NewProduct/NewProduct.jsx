@@ -9,6 +9,7 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import swal from "sweetalert";  
+axios.defaults.withCredentials = true;
 
 function NewProduct() {
   const [productData, setProductData] = useState({
@@ -29,10 +30,20 @@ function NewProduct() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Aquí puedes hacer algo con los datos del formulario, como enviarlos a una API
-  
+    const token = sessionStorage.getItem("token")
+    const config = {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
       const url = "http://localhost:8080/api/products";
       try {
-          const resp = await axios.post(url, productData,{ withCredentials: true })
+          const resp = await axios.post(
+            url,
+            productData,
+            config
+        );
           if (resp.data.status === "success") {
               swal({
                 title: "Éxito",
