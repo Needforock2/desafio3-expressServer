@@ -46,6 +46,7 @@ export const NavBar = () => {
     } else {
       setSession(false);
     }
+    console.log(session)
   }, [session]);
 
   useEffect(() => {

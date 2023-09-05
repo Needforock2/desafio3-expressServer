@@ -69,6 +69,7 @@ export const Login = ({ successLogin, handleRegister }) => {
     try {
       const resp = await axios.post(url, loginData);
       sessionStorage.setItem("token", resp.data.session.token)
+
       successLogin();
       swal({
         title: "Exito",

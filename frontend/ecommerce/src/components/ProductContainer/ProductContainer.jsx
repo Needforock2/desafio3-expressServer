@@ -8,6 +8,7 @@ import SearchBar from "../SearchBar/SearchBar";
 import NoSearchResults from "../NoSearchResults/NoSearchResults";
 axios.defaults.withCredentials = true;
 
+
 export default function ProductContainer() {
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState({});
@@ -74,7 +75,7 @@ export default function ProductContainer() {
     const handleSearch = async (value) => {
         const url = `http://localhost:8080/api/products?title=${value}`;
         try {
-            const resp = await axios.get(url)
+            const resp = await axios.get(url, { withCredentials: true })
             setProducts(resp.data.payload);
             setPagination({
               page: resp.data.page,

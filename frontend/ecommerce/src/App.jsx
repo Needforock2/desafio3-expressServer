@@ -8,10 +8,6 @@ import ProductDetail from './components/ProductDetail/ProductDetail';
 import NewProduct from './components/NewProduct/NewProduct';
 
 
-
-
-
-
 function App() {
 
   return (

@@ -89,6 +89,7 @@ auth_router.get("/fail-login", (req, res) => {
 
 //logout
 
+
 auth_router.post("/logout", async (req, res, next) => {
   try {
     req.session.destroy();
@@ -131,6 +132,7 @@ auth_router.get(
             </script>
             </html>`
       );
+
     } catch (error) {
       next(error);
     }
