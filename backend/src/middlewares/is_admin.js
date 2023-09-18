@@ -1,5 +1,4 @@
 export default function (req, res, next) {
-    console.log(req)
     try {
         if (req.session.role === 1) {
             next()

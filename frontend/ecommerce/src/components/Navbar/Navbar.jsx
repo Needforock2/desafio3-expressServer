@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./navbar.css";
 import { CartWidget } from "../CartWidget/CartWidget";
 import {
@@ -10,6 +10,11 @@ import {
   ModalContent,
   ModalHeader,
   ModalCloseButton,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import { Login } from "../Login/Login";
 import { useEffect, useState } from "react";
@@ -23,6 +28,8 @@ export const NavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [session, setSession] = useState(false);
   const [register, setRegister] = useState(false);
+  const [user, setUser] = useState({})
+  const navigate = useNavigate()
   const successLogin = () => {
     setSession(true);
     onClose();
@@ -32,21 +39,33 @@ export const NavBar = () => {
     setRegister(!register);
   };
 
-  const getToken = () => {
-    const token = sessionStorage.getItem("token");
-    return token;
-  };
-  const resetSessionStore = () => {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("cid");
-  };
-  useEffect(() => {
-    if (getToken()) {
-      setSession(true);
-    } else {
-      setSession(false);
+  const getUser = async() => {  
+    const url2 = "http://localhost:8080/api/sessions/current";
+    let user = ""
+    try {
+      if (document.cookie) {
+        const resp = await axios.get(url2);
+       user = resp.data.user
+        if (user) {
+          setSession(true)
+        } else {
+          setSession(false)
+        }        
+      }
+    } catch (error) {
+      swal({
+        title: "Error",
+        text: error.response.data.message,
+        icon: "error",
+      });
     }
-    console.log(session)
+    setUser(user)
+  };
+
+
+  useEffect(() => {
+    getUser()
+  
   }, [session]);
 
   useEffect(() => {
@@ -62,8 +81,13 @@ export const NavBar = () => {
         text: resp.data.message,
         icon: "success",
       });
+      sessionStorage.removeItem("cid")
+      document.cookie =
+        "token" + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       setSession(false);
-      resetSessionStore();
+      console.log(session)
+      navigate("/")
+
     } catch (error) {
       swal({
         title: "Error",
@@ -72,6 +96,11 @@ export const NavBar = () => {
       });
     }
   };
+
+  const handleProfileClick = () => {
+    
+  }
+
   return (
     <>
       <header className="App-header d-flex col-12 justify-content-between">
@@ -81,14 +110,33 @@ export const NavBar = () => {
           </NavLink>
         </div>
         <Flex gap={10} justifyContent="center" alignItems="center">
-          {session ? (
             <>
-              <NavLink to={`/new_product`}>Crear Producto</NavLink>
-              <NavLink onClick={handleLogout}>Logout</NavLink>
+              {user.role === 1 ? (
+                <NavLink to={`/new_product`}>Crear Producto</NavLink>
+              ) : null}
+            {session ? (
+              <Menu>
+                <MenuButton borderRadius={50}>
+                  <Avatar
+                    src={user.photo}
+                    border="solid black 1px"
+                    p={1}
+                    h="60px"
+                    w="60px"
+                  />
+                </MenuButton>
+                <MenuList>
+                  <MenuItem onClick={handleProfileClick} fontSize={20}><NavLink to="/profile" >Perfil</NavLink></MenuItem>
+                  <MenuItem onClick={handleLogout} fontSize={20}>
+                    Logout
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            ) : (
+              <NavLink onClick={onOpen}>Login</NavLink>
+              )}
             </>
-          ) : (
-            <NavLink onClick={onOpen}>Login</NavLink>
-          )}
+         
           <CartWidget />
         </Flex>
         <Modal isOpen={isOpen} onClose={onClose}>

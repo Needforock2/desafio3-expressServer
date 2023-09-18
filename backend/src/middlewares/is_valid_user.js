@@ -3,7 +3,7 @@ import User from "../dao/models/user.js"
 export default async function (req, res, next) {
     try {
         const one = await User.findOne({ mail: req.body.mail })
-        if (one && one.password === req.body.password) {
+        if (one) {
             next()
         } else {
             return res.status(400).json({

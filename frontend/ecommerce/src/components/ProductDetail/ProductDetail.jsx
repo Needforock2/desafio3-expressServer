@@ -53,7 +53,11 @@ export default function ProductDetail() {
            icon: "success",
          });
      } catch (error) {
-       console.log(error);
+        swal({
+          title: "Ooops",
+          text: "Debes Iniciar sesión",
+          icon: "error",
+        });
      }
    };
     

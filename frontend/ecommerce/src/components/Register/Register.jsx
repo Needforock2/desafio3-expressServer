@@ -12,7 +12,6 @@ import {
   InputRightElement,
   IconButton,
   useDisclosure,
-  Spacer,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRef, useState } from "react";
@@ -43,7 +42,6 @@ export const Register = ({ successLogin, handleRegister }) => {
     const url = "http://localhost:8080/api/auth/register";
     try {
       const resp = await axios.post(url, loginData);
-      console.log(resp);
       successLogin();
       swal({
         title: "Exito",
@@ -111,11 +109,18 @@ export const Register = ({ successLogin, handleRegister }) => {
           <Stack spacing="6">
             <Stack spacing="6">
               <FormControl>
-                <FormLabel htmlFor="name">Nombre</FormLabel>
+                <FormLabel htmlFor="first_name">Nombre</FormLabel>
                 <Input
-                  id="name"
-                  name="name"
-                  type="name"
+                  id="first_name"
+                  name="first_name"
+                  type="string"
+                  onChange={handleInputChange}
+                />
+                <FormLabel htmlFor="last_name">Apellido</FormLabel>
+                <Input
+                  id="last_name"
+                  name="last_name"
+                  type="string"
                   onChange={handleInputChange}
                 />
                 <FormLabel htmlFor="name">Edad</FormLabel>
@@ -164,7 +169,6 @@ export const Register = ({ successLogin, handleRegister }) => {
                 Registrarte
               </Button>
             </Stack>
-            
           </Stack>
         </Box>
       </Stack>

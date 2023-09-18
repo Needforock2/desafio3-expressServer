@@ -8,6 +8,8 @@ import createHash from "../middlewares/createHash.js";
 import is_valid_pass from "../middlewares/is_valid_pass.js";
 import passport from "passport";
 import create_token from "../middlewares/create_token.js";
+import verify_token from "../middlewares/verify_token.js";
+import verify_token_cookies from "../middlewares/verify_token_cookies.js";
 
 const auth_router = Router();
 
@@ -55,7 +57,7 @@ auth_router.get("/fail-register", (req, res) => {
   });
 });
 
-//LOGIN
+//LOGIN Passport
 
 auth_router.post(
   "/login",
@@ -67,18 +69,51 @@ auth_router.post(
   create_token,
   async (req, res, next) => {
     try {
-      console.log(req.user);
       req.session.mail = req.user.mail;
       req.session.role = req.user.role;
-      return res.status(200).json({
-        session: req.session,
-        message: req.session.mail + " inició sesión",
-      });
+      return res
+        .status(200)
+        .cookie("token", req.session.token, {
+          maxAge: 60 * 60 * 25 * 7 * 1000,
+          httpOnly: false,
+        })
+        .json({
+          session: req.session,
+          message: req.session.mail + " inició sesión",
+        });
     } catch (error) {
       next(error);
     }
   }
 );
+
+/* auth_router.post(
+  "/login",
+  is_8_char,
+  is_valid_user,
+  is_valid_pass,
+  create_token,
+  async (req, res, next) => {
+    try {
+      req.session.mail = req.body.mail;
+      let one = await User.findOne({ mail: req.body.mail }); //documento de mongo con todas las propiedades del usuario
+      req.session.role = one.role;
+      console.log(req.session.token)
+      return res
+        .status(200)
+        .cookie("token", req.session.token, {
+          maxAge: 60 * 60 * 25 * 7 * 1000,
+          httpOnly: false,
+        })
+        .json({
+          session: req.session,
+          message: req.session.mail + " inicio sesión",
+        });
+    } catch (error) {
+      next(error);
+    }
+  }
+); */
 
 auth_router.get("/fail-login", (req, res) => {
   res.status(400).json({
@@ -89,28 +124,29 @@ auth_router.get("/fail-login", (req, res) => {
 
 //logout
 
-
-auth_router.post("/logout", async (req, res, next) => {
-  try {
-    req.session.destroy();
-    res.cookie("connect.sid", "", { expires: new Date(0) });
-    return res.status(200).json({
-      success: true,
-      message: "sesion cerrada",
-      dataSession: req.session,
-    });
-  } catch (error) {
-    next(error);
+auth_router.post(
+  "/logout",
+  passport.authenticate("jwt"),
+  async (req, res, next) => {
+    try {
+      req.session.destroy();
+      res.cookie("token", "", { expires: new Date(0) });
+      return res.status(200).json({
+        success: true,
+        message: "sesion cerrada",
+        dataSession: req.session,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 //GH register
 auth_router.get(
   "/github",
   passport.authenticate("github", { scope: ["user:mail"] }),
-  (req, res) => {
-
-  }
+  (req, res) => {}
 );
 auth_router.get(
   "/github/callback",
@@ -119,8 +155,8 @@ auth_router.get(
   (req, res, next) => {
     try {
       req.session.mail = req.user.mail;
-        req.session.role = req.user.role;
-        console.log(req.session)
+      req.session.role = req.user.role;
+      console.log(req.session);
       const session = JSON.stringify(req.session);
       return res.status(200).send(
         `<!DOCTYPE html>
@@ -132,7 +168,6 @@ auth_router.get(
             </script>
             </html>`
       );
-
     } catch (error) {
       next(error);
     }

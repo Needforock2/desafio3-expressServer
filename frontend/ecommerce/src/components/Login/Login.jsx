@@ -68,8 +68,6 @@ export const Login = ({ successLogin, handleRegister }) => {
     const url = "http://localhost:8080/api/auth/login";
     try {
       const resp = await axios.post(url, loginData);
-      sessionStorage.setItem("token", resp.data.session.token)
-
       successLogin();
       swal({
         title: "Exito",
