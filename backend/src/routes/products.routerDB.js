@@ -4,11 +4,13 @@ import Product from "../dao/models/product.js";
 import auth from "../middlewares/auth.js";
 import is_admin from "../middlewares/is_admin.js";
 import verify_token from "../middlewares/verify_token.js";
+import verify_token_cookies from "../middlewares/verify_token_cookies.js";
+import passport from "passport";
 
 const router = Router();
 
 //CREATE
-router.post("/", /* is_admin ,*/ verify_token, async (req, res, next) => {
+router.post("/", is_admin , passport.authenticate('jwt'), async (req, res, next) => {
   try {
     const product = req.body;
     let one = await Product.create(product);

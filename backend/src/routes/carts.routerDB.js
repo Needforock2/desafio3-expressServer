@@ -1,17 +1,27 @@
 import { Router } from "express";
 import Cart from "../dao/models/cart.js";
+import User from "../dao/models/user.js"
 import { io } from "../app.js";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
+import passport from "passport";
 
 
 const router = Router();
 
 //CREATE CART
-router.post("/", async (req, res, next) => {
+router.post("/", passport.authenticate('jwt'), async (req, res, next) => {
   try {
     const one = await Cart.create(req.body);
-    console.log(one);
+    const user= req.user
+   //console.log("id del carrito",one.id)
+    const cartObjectId = new ObjectId(one.id);
+    const carrito = { cart: cartObjectId };
+  //  console.log("carrito", carrito)
+    user.cart.push(carrito)
+    
+    const usuario = await User.updateOne({ _id: user.id }, user );
+    console.log("usuario",usuario)
     return res.status(201).json({
       success: true,
       message: `cart created with id: ${one.id}`,
@@ -41,37 +51,42 @@ router.get("/:cid", async (req, res) => {
 });
 
 //UPDATE CART WITH A PRODUCT
-router.post("/:cid/products/:pid", async (req, res, next) => {
-  let { cid, pid } = req.params;
+router.post(
+  "/:cid/products/:pid",
+  passport.authenticate("jwt"),
+  async (req, res, next) => {
+    let { cid, pid } = req.params;
+   // console.log(req.user)
+    try {
+      const cart = await Cart.findOne({ _id: cid });
+      const productObjectId = new ObjectId(pid);
+      const productoExistente = cart.products.find(
+        (item) => item.product.toString() === productObjectId.toString()
+      );
 
-  try {
-    const cart = await Cart.findOne({ _id: cid });
-    const productObjectId = new ObjectId(pid);
-    const productoExistente = cart.products.find(
-      (item) => item.product.toString() === productObjectId.toString()
-    );
-
-    if (productoExistente) {
-      //Si el producto existe en el cerrito le sumamos la cantidad
-      productoExistente.quantity += 1;
-    } else {
-      //sino, lo agregamos con cantidad 1
-      const product = { product: productObjectId, quantity: 1 };
-      cart.products.push(product);
+      if (productoExistente) {
+        //Si el producto existe en el cerrito le sumamos la cantidad
+        productoExistente.quantity += 1;
+      } else {
+        //sino, lo agregamos con cantidad 1
+        const product = { product: productObjectId, quantity: 1 };
+        cart.products.push(product);
+      }
+      console.log(cid)
+      await Cart.updateOne({ _id: cid }, cart);
+      io.emit("cart", cart);
+      return res.status(200).json({
+        success: true,
+        message: `cart id: ${cid} modified`,
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: `cart id: ${cid} not found`,
+      });
     }
-    await Cart.updateOne({ _id: cid }, cart);
-    io.emit("cart", cart);
-    return res.status(200).json({
-      success: true,
-      message: `cart id: ${cid} modified`,
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: `cart id: ${cid} not found`,
-    });
   }
-});
+);
 
 //ACTUALIZAR LA CANTIDAD DE UN PRODUCTO
 router.put("/:cid/products/:pid", async (req, res, next) => {

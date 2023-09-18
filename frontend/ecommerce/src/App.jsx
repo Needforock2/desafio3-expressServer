@@ -6,6 +6,7 @@ import { NavBar } from './components/Navbar/Navbar';
 import Cart from './components/Cart/Cart';
 import ProductDetail from './components/ProductDetail/ProductDetail';
 import NewProduct from './components/NewProduct/NewProduct';
+import Profile from './components/Profile/Profile';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/detail/:pid" element={<ProductDetail />} />
         <Route path="/new_product" element={<NewProduct />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );

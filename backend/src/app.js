@@ -1,5 +1,5 @@
 import "dotenv/config.js";
-import express from "express";
+import express, { Router }  from "express";
 import productsRouterDB from "./routes/products.routerDB.js";
 import handlebars from "express-handlebars";
 import cartsRouterDB from "./routes/carts.routerDB.js";
@@ -18,6 +18,9 @@ import MongoStore from "connect-mongo";
 import auth_router from "./routes/auth.router.js";
 import passport from "passport";
 import inicializePassport from "./middlewares/passport.js";
+import ProductRouter from "./routes/products.myrouter.js";
+import router from "./routes/index.js";
+
 
 const PORT = 8080;
 const ready = () => {
@@ -42,6 +45,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+
 app.use(cookieParser(process.env.SECRET_COOKIE));
 app.use(
   expressSession({
@@ -55,15 +59,17 @@ app.use(
   })
 );
 
-inicializePassport()
-app.use(passport.initialize())
-app.use(passport.session())
+inicializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
+app.use("/",router)
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
+
 
 //File System
 /* app.use("/api/products", productsRouter);
@@ -71,13 +77,18 @@ app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter); */
 
 //MONGO
-app.use("/api/products", productsRouterDB);
-app.use("/api/carts", cartsRouterDB);
+//app.use("/api/products", productsRouterDB);
+/* app.use("/api/carts", cartsRouterDB);
 app.use("/", viewsRouter);
 app.use("/api/cookies", cookies_router);
 app.use("/api/sessions", sessions_router);
-app.use("/api/auth", auth_router)
+app.use("/api/auth", auth_router); */
+
+
+
+
 const server = app.listen(PORT, ready);
+
 
 export const io = new Server(server);
 const fetchCart = async (cid) => {
