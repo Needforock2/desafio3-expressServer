@@ -109,23 +109,7 @@ router.get("/:pid", async (req, res, next) => {
   }
 });
 
-//UPDATE
-router.put("/:pid", async (req, res, next) => {
-  let { pid } = req.params;
-  try {
-    let data = req.body;
-    let one = await Product.findByIdAndUpdate(pid, data);
-    return res.status(200).json({
-      success: true,
-      message: `product id: ${one._id} modified`,
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: `product id: ${pid} not found`,
-    });
-  }
-});
+
 
 //DELETE
 router.delete("/:pid", async (req, res) => {

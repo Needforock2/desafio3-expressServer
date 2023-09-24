@@ -22,7 +22,7 @@ export default class MyRouter {
   }
   responses = (req, res, next) => {
     res.sendSuccessCreate = (payload) => res.status(201).json(payload);
-    res.sendSucess = (payload) => res.status(200).json(payload);
+    res.sendSuccess = (payload) => res.status(200).json(payload);
     res.sendNotFound = () =>
       res.status(404).json({ success: false, response: "not found" });
     res.sendNoAuthenticatedError = (error) =>
