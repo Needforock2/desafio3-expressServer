@@ -126,7 +126,7 @@ auth_router.get("/fail-login", (req, res) => {
 
 auth_router.post(
   "/logout",
-  passport.authenticate("jwt"),
+  passport.authenticate("jwt",{ session:false }),
   async (req, res, next) => {
     try {
       req.session.destroy();

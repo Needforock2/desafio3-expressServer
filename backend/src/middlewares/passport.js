@@ -2,7 +2,9 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import User from "../dao/models/user.js";
 import GHStrategy from "passport-github2";
-import  jwt  from "passport-jwt";
+import jwt from "passport-jwt";
+import config from "../config/config.js";
+
 
 export default function inicializePassport() {
   passport.serializeUser((user, done) => done(null, user._id));
@@ -59,9 +61,9 @@ export default function inicializePassport() {
     "github",
     new GHStrategy(
       {
-        clientID: process.env.GH_CLIENT_ID,
-        clientSecret: process.env.GH_SECRET,
-        callbackURL: process.env.GH_CB,
+        clientID: config.GH_CLIENT_ID,
+        clientSecret: config.GH_SECRET,
+        callbackURL: config.GH_CB,
       },
       async (accesToken, refreshToken, profile, done) => {
         try {

@@ -20,12 +20,18 @@ import passport from "passport";
 import inicializePassport from "./middlewares/passport.js";
 import ProductRouter from "./routes/products.myrouter.js";
 import router from "./routes/index.js";
+import program from "./config/arguments.js"
+import config from "./config/config.js";
 
 
-const PORT = 8080;
+const port = program.p
+const environment = program.mode
+
+const PORT =  port
 const ready = () => {
-  console.log("server ready on pot " + PORT);
-  connect(process.env.DATABASE_URL)
+  console.log( "mode", environment)
+  console.log("server ready on port " + PORT);
+  connect(config.DATABASE_URL)
     .then(() => {
       console.log("database connected");
     })
@@ -46,14 +52,14 @@ app.use(function (req, res, next) {
 });
 
 
-app.use(cookieParser(process.env.SECRET_COOKIE));
+app.use(cookieParser(config.SECRET_COOKIE));
 app.use(
   expressSession({
     store: MongoStore.create({
-      mongoUrl: process.env.DATABASE_URL,
+      mongoUrl: config.DATABASE_URL,
       ttl: 1000 * 60 * 60 * 24 * 7,
     }),
-    secret: process.env.SECRET_SESSION,
+    secret: config.SECRET_SESSION,
     resave: false,
     saveUninitialized: false,
   })
