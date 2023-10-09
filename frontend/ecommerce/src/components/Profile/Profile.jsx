@@ -14,7 +14,7 @@ const Profile = () => {
        try {
          if (document.cookie) {
            const resp = await axios.get(url2);
-           user = resp.data.user;
+           user = resp.data.user[0];
      
          }
        } catch (error) {
@@ -23,7 +23,7 @@ const Profile = () => {
            text: error.response.data.message,
            icon: "error",
          });
-         }
+       }
          setUser(user)
      };
 

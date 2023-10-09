@@ -13,21 +13,15 @@ let schema = new Schema({
   role: { type: Number, default: 0 },
   password: { type: String, required: true },
   cart: {
-    type: [
-      {
-        cart: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "carts",
-        },
-      },
-    ],
-    default: [],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "carts",
+    default: null
   },
 });
 
 schema.pre("find", function () {
-  this.populate("carts.cart")
-})
+  this.populate("cart");
+});
 
 let User = model(collection, schema);
 export default User;

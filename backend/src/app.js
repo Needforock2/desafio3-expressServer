@@ -1,41 +1,29 @@
 import "dotenv/config.js";
-import express, { Router }  from "express";
-import productsRouterDB from "./routes/products.routerDB.js";
+import express, { Router } from "express";
+import sessions from "./config/sessions/factory.js";
+
 import handlebars from "express-handlebars";
-import cartsRouterDB from "./routes/carts.routerDB.js";
-import viewsRouter from "./routes/views.router.js";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
-import { connect } from "mongoose";
-import Product from "./dao/models/product.js";
-import Cart from "./dao/models/cart.js";
-import cookies_router from "./routes/cookies.router.js";
+import Product from "./dao/mongo/models/product.js";
+import Cart from "./dao/mongo/models/cart.js";
 import cookieParser from "cookie-parser";
 import expressSession from "express-session";
-import sessions_router from "./routes/sessions.router.js";
-import sessionFileStore from "session-file-store";
 import MongoStore from "connect-mongo";
-import auth_router from "./routes/auth.router.js";
 import passport from "passport";
 import inicializePassport from "./middlewares/passport.js";
-import ProductRouter from "./routes/products.myrouter.js";
 import router from "./routes/index.js";
-import program from "./config/arguments.js"
-import config from "./config/config.js";
+import program from "./config/arguments.js";
+import config from "./config/env.js";
 
+const port = program.p;
+const environment = program.mode;
 
-const port = program.p
-const environment = program.mode
-
-const PORT =  port
+const PORT = process.env.PORT || port;
 const ready = () => {
-  console.log( "mode", environment)
+  console.log("mode", environment);
   console.log("server ready on port " + PORT);
-  connect(config.DATABASE_URL)
-    .then(() => {
-      console.log("database connected");
-    })
-    .catch((err) => console.log(err));
+
 };
 
 const app = express();
@@ -51,19 +39,8 @@ app.use(function (req, res, next) {
   next();
 });
 
-
 app.use(cookieParser(config.SECRET_COOKIE));
-app.use(
-  expressSession({
-    store: MongoStore.create({
-      mongoUrl: config.DATABASE_URL,
-      ttl: 1000 * 60 * 60 * 24 * 7,
-    }),
-    secret: config.SECRET_SESSION,
-    resave: false,
-    saveUninitialized: false,
-  })
-);
+app.use(sessions);
 
 inicializePassport();
 app.use(passport.initialize());
@@ -71,11 +48,10 @@ app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
-app.use("/",router)
+app.use("/", router);
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
-
 
 //File System
 /* app.use("/api/products", productsRouter);
@@ -90,11 +66,7 @@ app.use("/api/cookies", cookies_router);
 app.use("/api/sessions", sessions_router);
 app.use("/api/auth", auth_router); */
 
-
-
-
 const server = app.listen(PORT, ready);
-
 
 export const io = new Server(server);
 const fetchCart = async (cid) => {

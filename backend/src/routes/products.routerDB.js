@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { io } from "../app.js";
-import Product from "../dao/models/product.js";
+import Product from "../dao/mongo/models/product.js";
 import auth from "../middlewares/auth.js";
 import is_admin from "../middlewares/is_admin.js";
 import verify_token from "../middlewares/verify_token.js";

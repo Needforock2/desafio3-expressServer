@@ -19,7 +19,7 @@ import { HiEye, HiEyeOff } from "react-icons/hi";
 import swal from "sweetalert";
 axios.defaults.withCredentials = true;
 
-export const Register = ({ successLogin, handleRegister }) => {
+export const Register = ({ successRegister, handleRegister }) => {
   const [loginData, setLoginData] = useState("");
   const { isOpen, onToggle } = useDisclosure();
   const inputRef = useRef(null);
@@ -42,7 +42,7 @@ export const Register = ({ successLogin, handleRegister }) => {
     const url = "http://localhost:8080/api/auth/register";
     try {
       const resp = await axios.post(url, loginData);
-      successLogin();
+      successRegister()
       swal({
         title: "Exito",
         text: resp.data.message,

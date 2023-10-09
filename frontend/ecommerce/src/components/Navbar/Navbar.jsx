@@ -28,29 +28,32 @@ export const NavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [session, setSession] = useState(false);
   const [register, setRegister] = useState(false);
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState({});
   const navigate = useNavigate()
+
   const successLogin = () => {
     setSession(true);
     onClose();
   };
 
+  const successRegister = () => {
+    onClose();
+  }
+
   const handleRegister = () => {
     setRegister(!register);
   };
 
-  const getUser = async() => {  
+  const getUser = async () => {
     const url2 = "http://localhost:8080/api/sessions/current";
-    let user = ""
+    let user = "";
     try {
       if (document.cookie) {
         const resp = await axios.get(url2);
-       user = resp.data.user
-        if (user) {
-          setSession(true)
-        } else {
-          setSession(false)
-        }        
+        user = resp.data.user[0];
+        setUser(user);
+        user.cart?._id && sessionStorage.setItem("cid", user.cart._id);
+        user ? setSession(true) : setSession(false);
       }
     } catch (error) {
       swal({
@@ -59,17 +62,13 @@ export const NavBar = () => {
         icon: "error",
       });
     }
-    setUser(user)
   };
-
-
   useEffect(() => {
-    getUser()
-  
+    getUser();
   }, [session]);
 
   useEffect(() => {
-    //console.log(register)
+
   }, [register]);
 
   const handleLogout = async () => {
@@ -81,25 +80,21 @@ export const NavBar = () => {
         text: resp.data.message,
         icon: "success",
       });
-      sessionStorage.removeItem("cid")
+      sessionStorage.removeItem("cid");
       document.cookie =
         "token" + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       setSession(false);
-      console.log(session)
-      navigate("/")
-
+      navigate("/");
     } catch (error) {
       swal({
         title: "Error",
-        text: error.response.data.message,
+        text: "error",
         icon: "error",
       });
     }
   };
 
-  const handleProfileClick = () => {
-    
-  }
+  const handleProfileClick = () => {};
 
   return (
     <>
@@ -110,10 +105,10 @@ export const NavBar = () => {
           </NavLink>
         </div>
         <Flex gap={10} justifyContent="center" alignItems="center">
-            <>
-              {user.role === 1 ? (
-                <NavLink to={`/new_product`}>Crear Producto</NavLink>
-              ) : null}
+          <>
+            {user.role === 1 ? (
+              <NavLink to={`/new_product`}>Crear Producto</NavLink>
+            ) : null}
             {session ? (
               <Menu>
                 <MenuButton borderRadius={50}>
@@ -126,7 +121,9 @@ export const NavBar = () => {
                   />
                 </MenuButton>
                 <MenuList>
-                  <MenuItem onClick={handleProfileClick} fontSize={20}><NavLink to="/profile" >Perfil</NavLink></MenuItem>
+                  <MenuItem onClick={handleProfileClick} fontSize={20}>
+                    <NavLink to="/profile">Perfil</NavLink>
+                  </MenuItem>
                   <MenuItem onClick={handleLogout} fontSize={20}>
                     Logout
                   </MenuItem>
@@ -134,9 +131,9 @@ export const NavBar = () => {
               </Menu>
             ) : (
               <NavLink onClick={onOpen}>Login</NavLink>
-              )}
-            </>
-         
+            )}
+          </>
+
           <CartWidget />
         </Flex>
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -149,7 +146,7 @@ export const NavBar = () => {
             <ModalBody>
               {register ? (
                 <Register
-                  successLogin={successLogin}
+                  successRegister={successRegister}
                   handleRegister={handleRegister}
                 />
               ) : (

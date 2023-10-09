@@ -1,6 +1,6 @@
 import { Router } from "express";
-import Cart from "../dao/models/cart.js";
-import User from "../dao/models/user.js"
+import Cart from "../dao/mongo/models/cart.js";
+import User from "../dao/mongo/models/user.js";
 import { io } from "../app.js";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
@@ -10,7 +10,7 @@ import passport from "passport";
 const router = Router();
 
 //CREATE CART
-router.post("/", passport.authenticate('jwt'), async (req, res, next) => {
+router.post("/",  passport.authenticate('jwt'),  async (req, res, next) => {
   try {
     const one = await Cart.create(req.body);
     const user= req.user
@@ -21,7 +21,7 @@ router.post("/", passport.authenticate('jwt'), async (req, res, next) => {
     user.cart.push(carrito)
     
     const usuario = await User.updateOne({ _id: user.id }, user );
-    console.log("usuario",usuario)
+
     return res.status(201).json({
       success: true,
       message: `cart created with id: ${one.id}`,
@@ -72,7 +72,7 @@ router.post(
         const product = { product: productObjectId, quantity: 1 };
         cart.products.push(product);
       }
-      console.log(cid)
+
       await Cart.updateOne({ _id: cid }, cart);
       io.emit("cart", cart);
       return res.status(200).json({
@@ -134,7 +134,7 @@ router.delete("/:cid/products/:pid", async (req, res) => {
       { _id: cid },
       { $pull: { products: { product: productObjectId } } }
     )
-    console.log(result)
+
     io.emit("cart", cart);
     return res.status(200).json({
       success: true,

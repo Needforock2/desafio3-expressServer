@@ -1,11 +1,15 @@
 import { Card, CardBody, Image, Stack, Heading, Text, Divider, CardFooter, ButtonGroup, Button } from '@chakra-ui/react';
 import axios from 'axios';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
+import { CartContext } from '../../store/context';
+
 
 
 
 export default function ProductCard({ producto }) {
+  const { setIsEmpty } = useContext(CartContext);
   const navigate = useNavigate()
   const { title, description, price, stock, category, _id } = producto
   
@@ -26,6 +30,7 @@ export default function ProductCard({ producto }) {
          text: "Producto Agregado al Carrito",
          icon: "success",
        });
+      setIsEmpty(false)
     } catch (error) {
       swal({
         title: "Ooops",
@@ -39,7 +44,7 @@ export default function ProductCard({ producto }) {
     navigate(`/detail/${pid}`)
   }
   return (
-    <Card maxW="sm">
+    <Card maxW="sm" boxShadow="5px 5px 17px 0px rgba(0,0,0,0.75);">
       <CardBody
         onClick={() => handleClick(_id)}
         _hover={{

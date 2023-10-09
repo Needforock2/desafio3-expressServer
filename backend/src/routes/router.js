@@ -1,6 +1,6 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-import User from "../dao/models/user.js";
+import User from "../dao/mongo/models/user.js";
 
 export default class MyRouter {
   constructor() {
@@ -23,6 +23,7 @@ export default class MyRouter {
   responses = (req, res, next) => {
     res.sendSuccessCreate = (payload) => res.status(201).json(payload);
     res.sendSuccess = (payload) => res.status(200).json(payload);
+    res.sendNotRegistered = (payload) => res.status(400).json(payload);
     res.sendNotFound = () =>
       res.status(404).json({ success: false, response: "not found" });
     res.sendNoAuthenticatedError = (error) =>
@@ -35,19 +36,15 @@ export default class MyRouter {
     if (policies.includes("PUBLIC")) {
       return next();
     } else {
-        const token = req.cookies.token;
-        
+      const token = req.cookies.token;
+
       if (!token) {
         return res.sendNoAuthenticatedError("Unauthenticated");
       } else {
-        
-          const payload = jwt.verify(token, process.env.SECRET_TOKEN);
-          
-        const user = await User.findOne(
-          { mail: payload.email },
-          "mail role"
-          );
-    
+        const payload = jwt.verify(token, process.env.SECRET_TOKEN);
+
+        const user = await User.findOne({ mail: payload.email }, "mail role");
+
         const role = user.role;
         if (
           (policies.includes("USER") && role === 0) ||
@@ -56,7 +53,7 @@ export default class MyRouter {
           req.user = user;
           return next();
         } else {
-          return res.sendNoAuthorizatedError("Unauthorized");
+          return res.sendNoAuthorizedError("Unauthorized");
         }
       }
     }

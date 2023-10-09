@@ -1,5 +1,5 @@
 import jwt from "passport-jwt";
-import User from "../dao/models/user.js";
+import User from "../dao/mongo/models/user.js";
 
 
 export default async function current_user(req, res, next) {

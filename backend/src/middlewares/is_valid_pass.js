@@ -1,14 +1,14 @@
 import { compareSync } from "bcrypt";
-import User from "../dao/models/user.js";
+import dao from "../dao/factory.js";
+const { User } = dao;
 
 
 export default async function is_valid_pass(req, res, next) {
-
+const model = new User();
     try {
-        const one = await User.findOne({ mail: req.body.mail });
+      const one = await model.readOne(req.body.mail);
         const pass_from_form = req.body.password
-        const hashed_pass = one.password
-
+        const hashed_pass = one.response.password
         let verified = compareSync(pass_from_form, hashed_pass);
          if (verified) {
            return next();

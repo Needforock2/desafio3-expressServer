@@ -1,15 +1,11 @@
 import { Router } from "express";
-import User from "../dao/models/user.js";
 import is_form_ok from "../middlewares/is_form_ok.js";
 import is_8_char from "../middlewares/is_8_char.js";
-import is_valid_user from "../middlewares/is_valid_user.js";
-import { user_exists } from "../middlewares/user_exists.js";
 import createHash from "../middlewares/createHash.js";
 import is_valid_pass from "../middlewares/is_valid_pass.js";
 import passport from "passport";
 import create_token from "../middlewares/create_token.js";
-import verify_token from "../middlewares/verify_token.js";
-import verify_token_cookies from "../middlewares/verify_token_cookies.js";
+
 
 const auth_router = Router();
 
@@ -148,6 +144,7 @@ auth_router.get(
   passport.authenticate("github", { scope: ["user:mail"] }),
   (req, res) => {}
 );
+
 auth_router.get(
   "/github/callback",
   passport.authenticate("github", {}),

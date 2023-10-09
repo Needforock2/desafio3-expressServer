@@ -1,4 +1,4 @@
-import User from "../dao/models/user.js";
+import User from "../dao/mongo/models/user.js";
 import jwt from 'jsonwebtoken'
 
 export default function verify_token (req, res, next){

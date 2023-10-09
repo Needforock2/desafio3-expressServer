@@ -1,0 +1,15 @@
+[
+	{
+		"title": "Canon R5",
+		"description": "Professional mirrorless camera",
+		"code": 7,
+		"price": 3799,
+		"status": true,
+		"stock": 2,
+		"category": "cameras",
+		"createdAt": "2023-10-05T22:19:56.838Z",
+		"updatedAt": "2023-10-05T22:19:56.838Z",
+		"__v": 0,
+		"_id": "54c2e4a62557799cae72d668"
+	}
+]
