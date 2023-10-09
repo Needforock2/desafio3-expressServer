@@ -12,7 +12,6 @@ export default async function current_user(req, res, next) {
       secretOrKey: process.env.SECRET_TOKEN,
     },
       async (payload, done) => {
-        console.log(payload);
       try {
         let one = await User.findOne(
           { mail: payload.email },

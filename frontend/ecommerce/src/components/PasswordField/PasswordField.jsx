@@ -23,9 +23,7 @@ export const PasswordField = forwardRef((props, ref) => {
       });
     }
   };
-/*   const handleChange = (e) => {
-    console.log(e.target.value)
-  } */
+
   return (
     <FormControl>
       <FormLabel htmlFor="password">Password</FormLabel>

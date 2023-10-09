@@ -12,6 +12,7 @@ export default function Cart() {
   const [products, setProducts] = useState([]);
   const [updated, setUpdated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false)
   const [total, setTotal] = useState(0);
   const { setIsEmpty } = useContext(CartContext);
 
@@ -19,19 +20,23 @@ export default function Cart() {
   useEffect(() => {
     setUpdated(false);
     async function fetchCart() {
+     
       const cid = sessionStorage.getItem("cid");
       if (cid) {
+         setLoadingProducts(true);
         const url = `http://localhost:8080/api/carts/${cid}`;
         try {
           const res = await axios.get(url);
           if (res.data.cart) {
             setProducts(res.data.cart?.sortedProducts);
             setTotal(res.data.cart.total);
+            
           } else {
             setProducts([]);
             setTotal(0);
             setIsEmpty(true);
           }
+          setLoadingProducts(false);
         } catch (error) {
           console.log(error);
         }
@@ -73,7 +78,8 @@ export default function Cart() {
       const response = await axios.delete(url);
       if (response.data.success === true) {
         sessionStorage.removeItem("cid");
-       setLoading(false);
+        setLoadingProducts(false)
+        setLoading(false);
         swal({
           title: "Exito",
           text: `Compra realizada exitosamente. Recibirás un email de confirmación`,
@@ -92,18 +98,24 @@ export default function Cart() {
       console.log(error);
     }
   };
- 
+
   return (
     <>
       {loading ? (
-        <Flex minH='90vh' alignItems="center"  justifyContent='center' flexDirection='column' gap='6'>
-          <Spinner size='xl' />
+        <Flex
+          minH="90vh"
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
+          gap="6"
+        >
+          <Spinner size="xl" />
           <Text>Procesando la orden....</Text>
-
         </Flex>
       ) : (
-        <Box>
-          {products.length > 0 ? (
+          <Box>
+            {!loadingProducts ?
+            products.length > 0 ? (
             <Flex
               flexDir="row"
               justifyContent="center"
@@ -133,7 +145,19 @@ export default function Cart() {
             </Flex>
           ) : (
             <Heading mt="20%">No hay articulos en el carrito</Heading>
-          )}
+          )
+           :
+           <Flex
+          minH="90vh"
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
+          gap="6"
+        >
+          <Spinner size="xl" />
+          <Text>Actualizando....</Text>
+        </Flex>}
+          
         </Box>
       )}
     </>

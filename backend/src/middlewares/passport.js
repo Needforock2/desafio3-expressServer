@@ -46,7 +46,6 @@ passport.use(
   new Strategy({ usernameField: "mail" }, async (username, password, done) => {
     try {
       const model = new User();
-      console.log(username);
       let one = await model.readOne({ mail: username });
       if (one) {
         return done(null, one);
@@ -79,7 +78,6 @@ passport.use(
             mail: profile._json.login,
             password: profile._json.url,
           });
-          console.log("user:", user);
           return done(null, user);
         }
       } catch (error) {

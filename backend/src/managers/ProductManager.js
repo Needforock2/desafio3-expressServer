@@ -33,7 +33,6 @@ export default class ProductManager {
         !product.code ||
         !product.status
       ) {
-        console.log("invalid product information, please check all properties");
         return { status: "error", message: "invalid product information, please check all properties" };
       }
 
@@ -71,7 +70,7 @@ export default class ProductManager {
   };
   updateProduct = async (id, modificacion) => {
     const productToEdit = await this.getProductById(id);
-    console.log(productToEdit) // buscamos el producto a editar por ID
+
     const productsArray = await this.getProducts(); // traemos el array desde el archivo
     const index = productsArray.findIndex((obj) => obj.id === id); // buscamos en el array el indice del objeto a modificar
     Object.assign(productToEdit, modificacion); //hacemos las modificaciones del objeto

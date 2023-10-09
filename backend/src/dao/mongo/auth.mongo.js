@@ -46,7 +46,6 @@ export default class AuthPersistance {
   }
   async readCurrent(query) {
     let one = await User.find(query);
-    console.log(one)
     if (one) {
       return {
         message: "user found!",
@@ -68,7 +67,6 @@ export default class AuthPersistance {
     }
   }
   async updateOne(mail, data) {
-    console.log("data", data);
     let one = await User.findOneAndUpdate({ mail }, data, { new: true });
     if (one) {
       return {

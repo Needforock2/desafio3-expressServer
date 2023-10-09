@@ -11,7 +11,6 @@ export default class ProductDto {
     this.stock = obj.stock;
     this.category = obj.category;
       this.thumbnails = obj.thumbnails;
-      console.log(args.persistance);
     if (args.persistance === "FS") {
       this.createdAt = new Date();
       this.updatedAt = new Date();
