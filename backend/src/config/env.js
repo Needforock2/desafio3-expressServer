@@ -14,4 +14,6 @@ export default {
   GH_CLIENT_ID: process.env.GH_CLIENT_ID,
   GH_CB: process.env.GH_CB,
   GH_SECRET: process.env.GH_SECRET,
+  G_MAIL: process.env.G_MAIL,
+  G_PASS: process.env.G_PASS,
 };

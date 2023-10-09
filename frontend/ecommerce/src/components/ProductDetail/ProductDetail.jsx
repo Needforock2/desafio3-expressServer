@@ -11,14 +11,16 @@ import {
   Button,
 } from "@chakra-ui/react";
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from 'react-router-dom';
 import swal from "sweetalert";
+import { CartContext } from "../../store/context";
 
 
 
 
 export default function ProductDetail() {
+    const { setIsEmpty} = useContext(CartContext);
     const params = useParams();
     const [product, setProduct] = useState({})
       const { pid } = params;
@@ -46,12 +48,14 @@ export default function ProductDetail() {
        const updateUrl = `http://localhost:8080/api/carts/${sessionStorage.getItem(
          "cid"
        )}/products/${pid}`;
-         const updateCart = await axios.post(updateUrl);
+         await axios.post(updateUrl);
          swal({
            title: "Exito",
            text: "Producto Agregado al Carrito",
            icon: "success",
          });
+       setIsEmpty(false)
+
      } catch (error) {
         swal({
           title: "Ooops",

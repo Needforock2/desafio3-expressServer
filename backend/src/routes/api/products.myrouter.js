@@ -1,6 +1,6 @@
-import MyRouter from "./router.js";
-import Product from "../dao/models/product.js";
-import ProductsController from "../controllers/products.controller.js";
+import MyRouter from "../router.js";
+import ProductsController from "../../controllers/products.controller.js";
+import args from "../../config/arguments.js"; //necesito saber la persistencia
 const productsController = new ProductsController();
 
 export default class ProductRouter extends MyRouter {
@@ -47,43 +47,52 @@ export default class ProductRouter extends MyRouter {
       }
 
       try {
-        const products = await productsController.readController(
-          query || title ? queryObject : {},
-          options
-        );
-        const {
-          docs,
-          limit,
-          totalPages,
-          page,
-          hasPrevPage,
-          hasNextPage,
-          prevPage,
-          nextPage,
-        } = products;
-        let nextLink = hasNextPage
-          ? `http://localhost:8080/api/products?limit=${limit}&page=${nextPage}${
-              sort ? `&sort=${sort}` : ""
-            }${query ? `&query=${queryType}=${queryValue}` : ""}`
-          : null;
-        let prevLink = hasPrevPage
-          ? `http://localhost:8080/api/products?limit=${limit}&page=${prevPage}${
-              sort ? `&sort=${sort}` : ""
-            }${query ? `&query=${queryType}=${queryValue}` : ""}`
-          : null;
+        if (args.persistance === "FS") {
+          const productsFS = await productsController.readController();
+           return res.sendSuccess({
+             status: "sucess",
+             payload: productsFS,
+           });
+        } else {
+         const  products = await productsController.readController(
+            query || title ? queryObject : {},
+            options
+          );
+           const {
+             docs,
+             limit,
+             totalPages,
+             page,
+             hasPrevPage,
+             hasNextPage,
+             prevPage,
+             nextPage,
+           } = products;
+           let nextLink = hasNextPage
+             ? `http://localhost:8080/api/products?limit=${limit}&page=${nextPage}${
+                 sort ? `&sort=${sort}` : ""
+               }${query ? `&query=${queryType}=${queryValue}` : ""}`
+             : null;
+           let prevLink = hasPrevPage
+             ? `http://localhost:8080/api/products?limit=${limit}&page=${prevPage}${
+                 sort ? `&sort=${sort}` : ""
+               }${query ? `&query=${queryType}=${queryValue}` : ""}`
+             : null;
 
-        return res.sendSuccess({
-          status: "success",
-          payload: docs,
-          totalPages,
-          prevPage,
-          nextPage,
-          page,
-          hasPrevPage,
-          hasNextPage,
-          nextLink,
-          prevLink,
-        });
+           return res.sendSuccess({
+             status: "success",
+             payload: docs,
+             totalPages,
+             prevPage,
+             nextPage,
+             page,
+             hasPrevPage,
+             hasNextPage,
+             nextLink,
+             prevLink,
+           });
+        }
+       
       } catch (error) {
         next(error);
       }
@@ -126,7 +135,7 @@ export default class ProductRouter extends MyRouter {
       try {
         let one = await productsController.destroyController(pid);
         if (one) {
-          return res.sendSuccess(response);
+          return res.sendSuccess(one);
         } else {
           return res.sendNotFound();
         }

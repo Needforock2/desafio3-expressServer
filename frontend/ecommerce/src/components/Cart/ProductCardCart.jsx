@@ -15,7 +15,7 @@ export default function ProductCardCart({ producto, qty, handleDelete, handleRef
   };
 
   return (
-    <Card width={600}>
+    <Card width={600} mb={7} boxShadow="5px 5px 17px 0px rgba(0,0,0,0.75);">
       <Flex
         flexDir="row"
         justifyContent="space-between"
@@ -28,7 +28,7 @@ export default function ProductCardCart({ producto, qty, handleDelete, handleRef
           borderRadius="lg"
           maxWidth={200}
         />
-        <Stack mt="6" spacing="3">
+        <Stack mt="6" spacing="3" p={1}>
           <Heading size="md">{title}</Heading>
           <Text>{decription}</Text>
           <Text color="blue.600" fontSize="2xl">
@@ -49,8 +49,9 @@ export default function ProductCardCart({ producto, qty, handleDelete, handleRef
           </Flex>
         </Stack>
         <CardFooter>
-          <ButtonGroup spacing="2" flexDir="column">
+          <ButtonGroup spacing="0" flexDir="column">
             <Button
+              fontSize="l"
               variant="ghost"
               colorScheme="blue"
               onClick={() => handleRefresh(_id, inputValue)}

@@ -1,29 +1,27 @@
 //CAPA DE SERVICIOS
-
-import ProductPersistance from "../dao/persistance/products.persistance.js";
-
+import ProductsRepository from "../repositories/products.rep.js";
 export default class ProductsService {
   constructor() {
-    this.model = new ProductPersistance();
+    this.repository = new ProductsRepository();
   }
   createService(data) {
-    let response = this.model.createModel(data);
+    let response = this.repository.createRep(data);
     return response;
   }
   readService(query, options) {
-    let response = this.model.readModel(query, options);
+    let response = this.repository.readRep(query, options);
     return response;
   }
   readOneService(data) {
-    let response = this.model.readOneModel(data);
+    let response = this.repository.readOneRep(data);
     return response;
   }
   updateService(id, data) {
-    let response = this.model.updateModel(id, data);
+    let response = this.repository.updateRep(id, data);
     return response;
   }
   destroyService(data) {
-    let response = this.model.destroyModel(data);
+    let response = this.repository.destroyRep(data);
     return response;
   }
 }

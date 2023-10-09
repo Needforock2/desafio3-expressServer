@@ -1,4 +1,4 @@
-import Product from "../models/product.js";
+import Product from "./models/product.js";
 
 export default class ProductPersistance {
   constructor() {}
@@ -21,18 +21,18 @@ export default class ProductPersistance {
     } else {
       return null;
     }
+  }
+  async updateModel(id, data) {
+    let one = await Product.findByIdAndUpdate(id, data);
+    if (one) {
+      return {
+        success: true,
+        message: `product id: ${one._id} modified`,
+      };
+    } else {
+      return null;
     }
-    async updateModel(id, data) {
-        let one = await Product.findByIdAndUpdate(id, data);
-        if (one) {
-            return {
-              success: true,
-              message: `product id: ${one._id} modified`,
-            };
-        } else {
-            return  null
-        }
-    }
+  }
   async destroyModel(data) {
     let one = await Product.findByIdAndDelete(data);
     if (one) {
@@ -41,7 +41,7 @@ export default class ProductPersistance {
         message: `product id: ${one._id} deleted`,
       };
     } else {
-        return null
-      }
+      return null;
+    }
   }
 }
