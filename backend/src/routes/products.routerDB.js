@@ -27,7 +27,7 @@ router.post("/", is_admin , passport.authenticate('jwt'), async (req, res, next)
 //READ ALL
 router.get("/", async (req, res, next) => {
   const { limit, page, query, title, sort } = req.query;
-  console.log(req.session)
+
   const options = {
     limit: limit ? limit : 6,
     page: page ? page : 1,

@@ -9,7 +9,6 @@ export default class ProductsRepository{
     }
     createRep = (data) => {
         let dataDto = new ProductDto(data)
-        console.log(dataDto)
         return this.model.createModel(dataDto)
     }
     readRep = (query, options)=> this.model.readModel(query, options)

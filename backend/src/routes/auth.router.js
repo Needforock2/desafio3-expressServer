@@ -153,7 +153,6 @@ auth_router.get(
     try {
       req.session.mail = req.user.mail;
       req.session.role = req.user.role;
-      console.log(req.session);
       const session = JSON.stringify(req.session);
       return res.status(200).send(
         `<!DOCTYPE html>

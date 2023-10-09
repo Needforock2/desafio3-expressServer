@@ -16,7 +16,7 @@ export default class CartPersistance {
   // READ
   async readModel(cid) {
     const cartT = await Cart.find({ _id: cid })
-    console.log(cartT);
+
     //Ordenamos los productos en base a Title
     const sortedProducts = cartT[0].products.sort((a, b) =>
       a.product.title.localeCompare(b.product.title)
@@ -78,10 +78,7 @@ export default class CartPersistance {
         },
       },
     ]);
-
-     //{ $merge: { into: "tickets" } },
-
-    
+   
      return {
        cart: cart[0]
 
@@ -202,8 +199,34 @@ export default class CartPersistance {
         },
       },
       {
+        $lookup: {
+          //mergeamos los datos de user con el del carrito
+          from: "users",
+          localField: "_id",
+          foreignField: "cart",
+          as: "user", //lo guardamos aqui
+        },
+      },
+      {
         $project: {
           _id: "$_id",
+          user: {
+            $arrayElemAt: [
+              {
+                $map: {
+                  input: "$user",
+                  as: "userData",
+                  in: {
+                    id: "$$userData._id",
+                    first_name: "$$userData.first_name",
+                    last_name: "$$userData.last_name",
+                    mail: "$$userData.mail",
+                  },
+                },
+              },
+              0,
+            ],
+          },
           total: "$totalAmount",
           paymentDate: new Date(),
           sortedProducts: {
@@ -227,8 +250,10 @@ export default class CartPersistance {
           },
         },
       },
+
       { $merge: { into: "tickets" } },
     ]);
+
     const resp = await Cart.find({ _id: cid });
     const cart = await Cart.deleteOne({ _id: cid });
     

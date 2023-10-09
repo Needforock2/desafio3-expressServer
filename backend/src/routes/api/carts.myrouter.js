@@ -14,21 +14,12 @@ export default class CartsRouter extends MyRouter {
     this.post("/", ["USER", "ADMIN"], async (req, res, next) => {
       try {
         let data = req.body;
-          const mail = req.user.mail;
-
-   
+        const mail = req.user.mail;
         let one = await cartsController.create(data); // creamos el carrito
-
-        //const cartObjectId = new ObjectId(one.cid);
         const carrito = { cart: one.cid };
-        console.log(carrito)
-        //user.response.cart.push(carrito);
-        // al usuario actual le inyectamos el carrito
-        //console.log(user)
-        if (args.persistance !== "FS") { 
-               let resp = await userController.updateOne(mail, carrito);
+        if (args.persistance !== "FS") {
+          let resp = await userController.updateOne(mail, carrito);
         }
-     
 
         return res.sendSuccessCreate({
           cid: one.cid,
@@ -102,34 +93,37 @@ export default class CartsRouter extends MyRouter {
         next(error);
       }
     });
-      
-      //SUM the CART TOTAL
-      this.read("/bills/:cid", ["USER", "ADMIN"], async (req, res, next) => { 
-        try {
-            let { cid } = req.params;
-              let response = await cartsController.sumAll(cid)
-            return res.sendSuccess(response)
-          } catch (error) {
-            next(error)
-          }
-      });
-    
+
+    //SUM the CART TOTAL
+    this.read("/bills/:cid", ["USER", "ADMIN"], async (req, res, next) => {
+      try {
+        let { cid } = req.params;
+        let response = await cartsController.sumAll(cid);
+        return res.sendSuccess(response);
+      } catch (error) {
+        next(error);
+      }
+    });
+
     //DELETE CART
 
-    this.delete("/payment-success/:cid", ["USER", "ADMIN"], async (req, res, next) => {
-      let mail = req.user.mail
-      try {        
-        let response = await cartsController.deleteCart(req.params);
-        let message = "<h2>Compra realizada exitosamente<h2> </br>";
-        for (let i = 0; i < response.cart[0].products.length; i++){
-          message += `<h4>${response.cart[0].products[i].product.title}<h4></br>
+    this.delete(
+      "/payment-success/:cid",
+      ["USER", "ADMIN"],
+      async (req, res, next) => {
+        let mail = req.user.mail;
+        try {
+          let response = await cartsController.deleteCart(req.params);
+          let message = "<h2>Compra realizada exitosamente<h2> </br>";
+          for (let i = 0; i < response.cart[0].products.length; i++) {
+            message += `<h4>${response.cart[0].products[i].product.title}<h4></br>
                       <h4>Precio: $${response.cart[0].products[i].product.price}<h4></br>
                       <h4>Cantidad: ${response.cart[0].products[i].quantity} <h4></br></br>
           `;
-        }
-        message+=`<h2>Total Pagado: $${response.total.totalAmount}</h2>`
-        await userController.updateOne(mail, {cart: null});         
-        if (response.success === true) {
+          }
+          message += `<h2>Total Pagado: $${response.total.totalAmount}</h2>`;
+          await userController.updateOne(mail, { cart: null });
+          if (response.success === true) {
             await transporter.sendMail({
               from: `Cachupines.cl <${config.G_MAIL}>`,
               to: `${mail}`,
@@ -141,9 +135,10 @@ export default class CartsRouter extends MyRouter {
           } else {
             return res.sendNotFound();
           }
-      } catch (error) {
-        next(error)
+        } catch (error) {
+          next(error);
+        }
       }
-    })
+    );
   }
 }

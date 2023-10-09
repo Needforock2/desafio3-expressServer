@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 
 
-export default function ProductCardCart({ producto, qty, handleDelete, handleRefresh }) {
+export default function ProductCardCart({ producto, qty, handleDelete, handleRefresh, key }) {
   const { title, decription, price, stock, category, _id } = producto;
 
   const [inputValue, setInputValue] = useState("");
@@ -15,7 +15,7 @@ export default function ProductCardCart({ producto, qty, handleDelete, handleRef
   };
 
   return (
-    <Card width={600} mb={7} boxShadow="5px 5px 17px 0px rgba(0,0,0,0.75);">
+    <Card key={key} width={600} mb={7} boxShadow="5px 5px 17px 0px rgba(0,0,0,0.75);">
       <Flex
         flexDir="row"
         justifyContent="space-between"

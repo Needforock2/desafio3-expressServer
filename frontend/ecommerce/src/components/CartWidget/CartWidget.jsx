@@ -17,16 +17,13 @@ export const CartWidget = () => {
   const { isEmpty, setIsEmpty } = useContext(CartContext);
 
   useEffect(() => {
-    console.log("fetching");
        async function fetchCart() {
          const cid = sessionStorage.getItem("cid");
          if (cid) {
              const url = `http://localhost:8080/api/carts/${cid}`;
              try {
                const cart = await axios.get(url);
-               if (cart.data.cart.sortedProducts.length > 0) {
-                 setIsEmpty(false)
-               }
+               cart.data?.cart.sortedProducts.length > 0 &&  setIsEmpty(false)    
                  setCartQty(cart.data.cart.sortedProducts.length);
              } catch (error) {
                console.log(error);

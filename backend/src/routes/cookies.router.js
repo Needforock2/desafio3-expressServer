@@ -19,7 +19,7 @@ cookies_router.get('/set', (req, res, next) => {
 
 cookies_router.get("/read", (req, res, next) => {
   try {
-    console.log(req.signedCookies);
+
     //return res.status(200).json(req.cookies)
     return res.status(200).json(req.signedCookies);
   } catch (error) {
