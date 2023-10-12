@@ -11,29 +11,53 @@ export default function Pagination({ pagination, handleNextPrevPage, handleRando
     const pagesArray = Array(pages)
     .fill()
     .map((_, index) => index + 1);
+  const maxVisibleButtons = 5;
+
+  const startIndex = Math.max(1, selectedPage - Math.floor(maxVisibleButtons / 2));
+  const endIndex = Math.min(startIndex + maxVisibleButtons, pagesArray.length);
 
   return (
-    <Flex fontSize={30} justifyContent="center" alignItems="center" gap={10} m={10}>
+    <Flex
+      fontSize={30}
+      justifyContent="center"
+      alignItems="center"
+      gap={10}
+      m={10}
+    >
       {page === 1 ? (
         <Button isDisabled={true}>Prev</Button>
       ) : (
         <Button onClick={() => handleNextPrevPage(prevlink)}>Prev</Button>
       )}
-      <Flex fontSize={30} justifyContent="center" gap={10}>
-        {pagesArray.map((item) => (
-          <Button
-            onClick={() => {
-              handleRandomClick(item);
-            }}
-            key={item}
-            padding={2}
-                color={selectedPage === item ? "white" : "black"}
-            backgroundColor={selectedPage === item ? "blue" : "blue.100"} // Aplicar color condicional
-          >
-            {item}
-          </Button>
-        ))}
-      </Flex>
+      <>
+        <Button
+          onClick={() => {
+            handleRandomClick(1);
+          }}
+          padding={2}
+          color={selectedPage === 1 ? "white" : "black"}
+          backgroundColor={selectedPage === 1 ? "blue" : "blue.100"}
+        >
+          {" "}
+          1
+        </Button>
+        <Flex fontSize={30} justifyContent="center" gap={10}>
+          {pagesArray.slice(startIndex, endIndex).map((item) => (
+            <Button
+              onClick={() => {
+                handleRandomClick(item);
+              }}
+              key={item}
+              padding={2}
+              color={selectedPage === item ? "white" : "black"}
+              backgroundColor={selectedPage === item ? "blue" : "blue.100"}
+            >
+              {item}
+            </Button>
+          ))}
+        </Flex>
+      </>
+
       {page === pagesArray.length ? (
         <Button isDisabled={true}>Next</Button>
       ) : (

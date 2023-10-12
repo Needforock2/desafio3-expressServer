@@ -10,7 +10,7 @@ let schema = new Schema({
   status: { type: Boolean, required: true, default: true },
   stock: { type: Number, required: true },
   category: { type: String, required: true },
-  thumbnails: { type: [String] },
+  thumbnails: { type: String},
 });
 schema.plugin(mongoosePaginate);
 
