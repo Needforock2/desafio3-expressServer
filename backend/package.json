@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/app.js --mode prod",
     "dev": "nodemon ./src/app.js -p 8080",
-    "fs": "nodemon ./src/app.js -p 8080 --persistance FS"
+    "fs": "nodemon ./src/app.js -p 8080 --persistance FS",
+    "mock": "nodemon ./src/mock/mock.js --mode dev"
   },
   "keywords": [],
   "author": "",
@@ -22,8 +23,10 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-compression": "^1.0.2",
     "express-handlebars": "^7.0.7",
     "express-session": "^1.17.3",
+    "google-images": "^2.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.4.1",
     "mongoose-paginate-v2": "^1.7.31",
@@ -36,5 +39,8 @@
     "processenv": "1.1.0",
     "session-file-store": "^1.5.0",
     "socket.io": "^4.7.1"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.1.0"
   }
 }

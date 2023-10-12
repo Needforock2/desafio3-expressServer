@@ -12,6 +12,8 @@ export default function ProductContainer() {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [pagination, setPagination] = useState({});
+const [searchString, setSearchString] = useState("")
+
   useEffect(() => {
     async function fetchProducts() {
       setLoadingProducts(true);
@@ -37,7 +39,8 @@ export default function ProductContainer() {
 
   const handleNextPrevPage = async (data) => {
     try {
-      const resp = await axios.get(data);
+      const query = data + `&title=${searchString}`
+      const resp = await axios.get(query);
       setProducts(resp.data.payload);
       setPagination({
         page: resp.data.page,
@@ -55,7 +58,8 @@ export default function ProductContainer() {
   };
 
   const handleRandomClick = async (data) => {
-    const url = `http://localhost:8080/api/products?limit=6&page=${data}`;
+   
+    const url = `http://localhost:8080/api/products?limit=6&page=${data}&title=${searchString}`;
     try {
       const resp = await axios.get(url);
       setProducts(resp.data.payload);
@@ -74,6 +78,8 @@ export default function ProductContainer() {
   };
 
   const handleSearch = async (value) => {
+    setSearchString(value)
+    
     const url = `http://localhost:8080/api/products?title=${value}`;
     try {
       const resp = await axios.get(url, { withCredentials: true });

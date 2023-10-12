@@ -1,7 +1,7 @@
 import "dotenv/config.js";
 import express, { Router } from "express";
 import sessions from "./config/sessions/factory.js";
-
+import compression from "express-compression"
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
@@ -15,6 +15,8 @@ import inicializePassport from "./middlewares/passport.js";
 import router from "./routes/index.js";
 import program from "./config/arguments.js";
 import config from "./config/env.js";
+import error_handler from "./middlewares/errorHandler.js";
+
 
 const port = program.p;
 const environment = program.mode;
@@ -39,6 +41,12 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(
+  compression({
+    brotli: { enabled: true, zlib: {} },
+  })
+);
+
 app.use(cookieParser(config.SECRET_COOKIE));
 app.use(sessions);
 
@@ -49,6 +57,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
 app.use("/", router);
+app.use(error_handler)
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");

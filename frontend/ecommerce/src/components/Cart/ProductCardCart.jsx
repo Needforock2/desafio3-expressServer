@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 
 
 export default function ProductCardCart({ producto, qty, handleDelete, handleRefresh, key }) {
-  const { title, decription, price, stock, category, _id } = producto;
+  const { title, decription, price, stock, category, _id, thumbnails } = producto;
 
   const [inputValue, setInputValue] = useState("");
   const [updated, setUpdated] = useState(false);
@@ -15,7 +15,12 @@ export default function ProductCardCart({ producto, qty, handleDelete, handleRef
   };
 
   return (
-    <Card key={key} width={600} mb={7} boxShadow="5px 5px 17px 0px rgba(0,0,0,0.75);">
+    <Card
+      key={key}
+      width={600}
+      mb={7}
+      boxShadow="5px 5px 17px 0px rgba(0,0,0,0.75);"
+    >
       <Flex
         flexDir="row"
         justifyContent="space-between"
@@ -23,7 +28,7 @@ export default function ProductCardCart({ producto, qty, handleDelete, handleRef
         p={5}
       >
         <Image
-          src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+          src={thumbnails}
           alt="Green double couch with wooden legs"
           borderRadius="lg"
           maxWidth={200}

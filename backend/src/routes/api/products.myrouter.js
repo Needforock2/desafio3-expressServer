@@ -19,7 +19,6 @@ export default class ProductRouter extends MyRouter {
     //READ
     this.read("/", ["PUBLIC"], async (req, res, next) => {
       const { limit, page, query, title, sort } = req.query;
-      //console.log(req.session);
       const options = {
         limit: limit ? limit : 6,
         page: page ? page : 1,
@@ -106,9 +105,11 @@ export default class ProductRouter extends MyRouter {
         if (product) {
           return res.sendSuccess(product);
         } else {
+          
           return res.sendNotFound();
         }
       } catch (error) {
+        res.sendNotFound();
         next(error);
       }
     });
@@ -125,6 +126,7 @@ export default class ProductRouter extends MyRouter {
           return res.sendNotFound();
         }
       } catch (error) {
+        res.sendNotFound();
         next(error);
       }
     });
@@ -140,6 +142,7 @@ export default class ProductRouter extends MyRouter {
           return res.sendNotFound();
         }
       } catch (error) {
+        res.sendNotFound();
         next(error);
       }
     });

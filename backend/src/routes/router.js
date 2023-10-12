@@ -1,6 +1,10 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
 import User from "../dao/mongo/models/user.js";
+import MyError from "../config/MyError.js";
+import errors from "../config/errors.js";
+
+const { notRegistered, authenticated, notFound, authorized } = errors;
 
 export default class MyRouter {
   constructor() {
@@ -23,39 +27,43 @@ export default class MyRouter {
   responses = (req, res, next) => {
     res.sendSuccessCreate = (payload) => res.status(201).json(payload);
     res.sendSuccess = (payload) => res.status(200).json(payload);
-    res.sendNotRegistered = (payload) => res.status(400).json(payload);
-    res.sendNotFound = () =>
-      res.status(404).json({ success: false, response: "not found" });
-    res.sendNoAuthenticatedError = (error) =>
-      res.status(401).json({ status: "error", error });
+    res.sendNotRegistered = (payload) =>
+      MyError.new(notRegistered(payload).message, notRegistered(payload).code);
+    res.sendNotFound = () => MyError.new(notFound.message, notFound.code);
+    res.sendNoAuthenticatedError = () =>
+      MyError.new(authenticated.message, authenticated.code);
     res.sendNoAuthorizedError = (error) =>
-      res.status(403).json({ status: "error", error });
+      MyError.new(authorized(error).message, authorized(error).code);
     return next();
   };
   handlePolicies = (policies) => async (req, res, next) => {
-    if (policies.includes("PUBLIC")) {
-      return next();
-    } else {
-      const token = req.cookies.token;
-
-      if (!token) {
-        return res.sendNoAuthenticatedError("Unauthenticated");
+    try {
+      if (policies.includes("PUBLIC")) {
+        return next();
       } else {
-        const payload = jwt.verify(token, process.env.SECRET_TOKEN);
+        const token = req.cookies.token;
 
-        const user = await User.findOne({ mail: payload.email }, "mail role");
-
-        const role = user.role;
-        if (
-          (policies.includes("USER") && role === 0) ||
-          (policies.includes("ADMIN") && role === 1)
-        ) {
-          req.user = user;
-          return next();
+        if (!token) {
+          return res.sendNoAuthenticatedError();
         } else {
-          return res.sendNoAuthorizedError("Unauthorized");
+          const payload = jwt.verify(token, process.env.SECRET_TOKEN);
+
+          const user = await User.findOne({ mail: payload.email }, "mail role");
+
+          const role = user.role;
+          if (
+            (policies.includes("USER") && role === 0) ||
+            (policies.includes("ADMIN") && role === 1)
+          ) {
+            req.user = user;
+            return next();
+          } else {
+            return res.sendNoAuthorizedError("Unauthorized");
+          }
         }
       }
+    } catch (error) {
+      return next(error);
     }
   };
   //create
