@@ -13,12 +13,7 @@ const model = new User();
          if (verified) {
            return next();
         }
-        return res.status(401).json({
-          status: 401,
-          method: req.method,
-          path: req.url,
-          message: "invalid credentials",
-        });
+        return res.sendInvalidCredentials()
     } catch (error) {
         next(error)
     }  

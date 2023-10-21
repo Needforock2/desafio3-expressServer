@@ -1,0 +1,8 @@
+ERROR: GET / - 16:26:47 - ERROR
+FATAL: GET / - 16:26:47 - FATAL
+ERROR: GET /api/mockingproducts - 16:36:15 - not found path
+ERROR: GET /api/mockingproducts - 20:27:38 - not found path
+ERROR: GET /api/mockingproducts - 20:27:48 - not found path
+ERROR: GET /api/mockingproducts - 20:27:55 - not found path
+ERROR: GET /api/mockingproducts - 20:28:22 - not found path
+ERROR: GET /api/mockingproducts - 20:29:09 - not found path

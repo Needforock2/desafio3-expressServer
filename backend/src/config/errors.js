@@ -1,5 +1,5 @@
 export default {
-    notRegisted: (payload) => {
+    notRegistered: (payload) => {
         return {
             message: payload, code: 400
         }
@@ -10,6 +10,7 @@ export default {
         return {
             message: payload, code: 403
         }
-    }
+    },
+    credentials: {message: "invalid credentials", code:401}
     
 }
