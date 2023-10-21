@@ -1,5 +1,5 @@
 import "dotenv/config.js";
-import express, { Router } from "express";
+import express from "express";
 import sessions from "./config/sessions/factory.js";
 import compression from "express-compression"
 import handlebars from "express-handlebars";
@@ -8,14 +8,14 @@ import { Server } from "socket.io";
 import Product from "./dao/mongo/models/product.js";
 import Cart from "./dao/mongo/models/cart.js";
 import cookieParser from "cookie-parser";
-import expressSession from "express-session";
-import MongoStore from "connect-mongo";
 import passport from "passport";
 import inicializePassport from "./middlewares/passport.js";
 import router from "./routes/index.js";
 import program from "./config/arguments.js";
 import config from "./config/env.js";
 import error_handler from "./middlewares/errorHandler.js";
+import winston from "./middlewares/winston.js";
+import not_found_handler from "./middlewares/not_found_handler.js";
 
 
 const port = program.p;
@@ -53,11 +53,13 @@ app.use(sessions);
 inicializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(winston);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
 app.use("/", router);
 app.use(error_handler)
+app.use(not_found_handler)
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");

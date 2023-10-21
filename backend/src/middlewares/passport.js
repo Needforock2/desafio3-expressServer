@@ -94,7 +94,9 @@ passport.use(
   new jwt.Strategy(
     {
       jwtFromRequest: jwt.ExtractJwt.fromExtractors([
-        (req) => req?.cookies["token"],
+        (req) => {
+          return req?.cookies["token"];
+        },
       ]),
       secretOrKey: process.env.SECRET_TOKEN,
     },

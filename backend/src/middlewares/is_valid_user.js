@@ -6,10 +6,7 @@ export default async function (req, res, next) {
         if (one) {
             next()
         } else {
-            return res.status(400).json({
-                success: false,
-                message: "wrong mail and/or password"
-            })
+            return res.sendInvalidCredentials()
         }
     } catch (error) {
         next(error)

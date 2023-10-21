@@ -59,14 +59,15 @@ export default class AuthRouter extends MyRouter {
           } else {
             return res.sendNotFound("user");
           }
-        } catch (error) {}
+        } catch (error) {
+          next(error)        }
       }
     );
 
     //logout
     this.post(
       "/logout",
-      ["PUBLIC"],
+      ["USER", "ADMIN"],
       passport.authenticate("jwt", { session: false }),
       async (req, res, next) => {
           try {
