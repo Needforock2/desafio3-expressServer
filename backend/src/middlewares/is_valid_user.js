@@ -1,10 +1,11 @@
+import AuthService from "../services/auth.service.js"
 
-import dao from "../dao/factory.js";
-const { User } = dao;
-let model = new User()
+
 export default async function (req, res, next) {
+
+    let model = new AuthService()
     try {
-        const one = await model.findOne({ mail: req.body.mail })
+        const one = await model.readOne(req.body.mail)
         if (one) {
             next()
         } else {

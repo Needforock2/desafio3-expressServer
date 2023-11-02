@@ -7,6 +7,13 @@ import is_user from "../../middlewares/is_user.js";
 import is_valid_pass from "../../middlewares/is_valid_pass.js";
 import create_token from "../../middlewares/create_token.js";
 import passport from "passport";
+import is_valid_user from "../../middlewares/is_valid_user.js";
+import transporter from "../../config/transporter.js";
+import config from "../../config/env.js";
+import jwt from "jsonwebtoken";
+import verify_token_pass_reset from "../../middlewares/verify_token_pass_reset.js";
+import check_pass_reset from "../../middlewares/check_pass_reset.js";
+import is_email_ok from "../../middlewares/is_email_ok.js";
 const authController = new AuthController();
 
 export default class AuthRouter extends MyRouter {
@@ -50,7 +57,7 @@ export default class AuthRouter extends MyRouter {
               .cookie("token", req.session.token, {
                 maxAge: 60 * 60 * 25 * 7 * 1000,
                 httpOnly: true,
-                sameSite: "lax"
+                sameSite: "lax",
               })
               .sendSuccess({
                 session: req.session,
@@ -60,7 +67,8 @@ export default class AuthRouter extends MyRouter {
             return res.sendNotFound("user");
           }
         } catch (error) {
-          next(error)        }
+          next(error);
+        }
       }
     );
 
@@ -70,15 +78,15 @@ export default class AuthRouter extends MyRouter {
       ["USER", "ADMIN", "PREMIUM"],
       passport.authenticate("jwt", { session: false }),
       async (req, res, next) => {
-          try {
-              req.session.destroy();
-              await authController.logout()
-              res.cookie("token", "", { expires: new Date(0) });
-              return res.sendSuccess({
-                success: true,
-                message: "sesion cerrada",
-                dataSession: req.session,
-              });
+        try {
+          req.session.destroy();
+          await authController.logout();
+          res.cookie("token", "", { expires: new Date(0) });
+          return res.sendSuccess({
+            success: true,
+            message: "sesion cerrada",
+            dataSession: req.session,
+          });
         } catch (error) {
           next(error);
         }
@@ -89,13 +97,71 @@ export default class AuthRouter extends MyRouter {
     this.put("/premium/:uid", ["USER", "PREMIUM"], async (req, res, next) => {
       try {
         let { uid } = req.params;
-        let response = await authController.changeRole(uid)
+        let response = await authController.changeRole(uid);
         if (response) {
           return res.sendSuccess(response);
         }
       } catch (error) {
-        next(error)
+        next(error);
       }
     });
+
+    //PASSWORD RESET REQUEST
+    this.post(
+      "/reset_req",
+      ["PUBLIC"],
+      is_email_ok,
+      is_valid_user,
+      async (req, res, next) => {
+        try {
+          let mail = req.body.mail;
+          let token = jwt.sign(
+            { email: req.body.mail },
+            process.env.SECRET_TOKEN,
+            { expiresIn: 60*60 }
+          );
+          let maskedToken = token.replace(/\./g, "*");
+          let message = `<h2>Sigue el siguiente enlace para reestablecer tu contraseña<h2> </br> <a href='http://localhost:5173/pass_reset/${maskedToken}'>Reestablecer contraseña</a>`;
+          await transporter.sendMail({
+            from: `Cachupines.cl <${config.G_MAIL}>`,
+            to: `${mail}`,
+            subject: "Enlace de cambio de contraseña",
+            html: message,
+          });
+          return res.sendSuccess({
+            success: true,
+            message:
+              "Enlace de reestablecimiento de contraseña enviado a tu correo",
+          });
+        } catch (error) {
+          next(error);
+        }
+      }
+    );
+
+    // PASSWORD RESET
+    this.post(
+      "/pass_reset",
+      ["PUBLIC"],
+      verify_token_pass_reset,
+      check_pass_reset,
+      is_8_char,
+      createHash,
+      async (req, res, next) => {
+        let response = await authController.updateOne(
+          req.user.response.mail,
+          req.body
+        );
+        if (response) {
+          return res.sendSuccess({
+            success: true,
+            message:
+              "Contraseña Cambiada",
+          })
+        } else {
+          return res.sendNotFound()
+        }
+      }
+    );
   }
 }

@@ -12,5 +12,6 @@ export default {
         }
     },
     credentials: {message: "invalid credentials", code:401},
-    duplicate: {message: "duplicate code", code:409}
+    duplicate: { message: "duplicate code", code: 409 },
+    expired: {message: "El enlace expiró, por favor vuelve a intentarlo", code: 401}
 }
