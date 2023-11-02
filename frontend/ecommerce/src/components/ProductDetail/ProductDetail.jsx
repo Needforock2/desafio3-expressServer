@@ -9,11 +9,10 @@ import {
   CardFooter,
   ButtonGroup,
   Button,
-  Flex,
   Box,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import swal from "sweetalert";
 import { CartContext } from "../../store/context";
@@ -62,7 +61,6 @@ export default function ProductDetail() {
       });
       setIsEmpty(false);
     } catch (error) {
-      console.log(error)
       swal({
         title: "Ooops",
         text: `${error.response.data.message}`,

@@ -1,42 +1,51 @@
-import { useEffect, useState } from "react";
-import { Box, Avatar, Text, VStack, Flex , Spinner} from "@chakra-ui/react";
+import { useContext, useEffect, useState } from "react";
+import { Box, Avatar, Text, VStack, Flex, Spinner } from "@chakra-ui/react";
 import swal from "sweetalert";
 import axios from "axios";
-
-
+import { CartContext } from "../../store/context";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const [user, setUser] = useState({});
-  const [loading, setLoading] = useState(false)
-    
-  const getUser = async () => {
-       setLoading(true)
-       const url2 = "http://localhost:8080/api/sessions/current";
-       let user = "";
-       try {
-        // if (document.cookie) {
-           const resp = await axios.get(url2);
-           user = resp.data.user[0];
-     
-        // }
-       } catch (error) {
-         swal({
-           title: "Error",
-           text: error.response.data.message,
-           icon: "error",
-         });
-       }
-    setUser(user)
-    setLoading(false)
-     };
+  const { role } = useContext(CartContext);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-     getUser()
-    }, [])
-    
+  useEffect(() => {
+    if (role === 0) {
+      navigate("/");
+    }
+  }, []);
+
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  const getUser = async () => {
+    setLoading(true);
+    const url2 = "http://localhost:8080/api/sessions/current";
+    let user = "";
+    try {
+       if (role !=0) {
+      const resp = await axios.get(url2);
+      user = resp.data.user[0];
+
+       }
+    } catch (error) {
+      swal({
+        title: "Error",
+        text: error.response.data.message,
+        icon: "error",
+      });
+    }
+    setUser(user);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
   return (
     <>
-      {!loading ? (
+      {role === 0 ? null : !loading ? (
         <Box
           maxW="md"
           borderWidth="1px"

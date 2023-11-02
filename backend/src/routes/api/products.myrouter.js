@@ -8,7 +8,7 @@ export default class ProductRouter extends MyRouter {
     //CREATE
     this.post("/", ["ADMIN","PREMIUM"], async (req, res, next) => {
       try {
-        console.log(req.user)
+
         let data = req.body;
         if (req.user.role === 2) {
           data.owner = req.user.mail;

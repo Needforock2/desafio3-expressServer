@@ -7,11 +7,26 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import swal from "sweetalert";  
+import { CartContext } from "../../store/context";
+import { useNavigate } from "react-router-dom";
+
+
 axios.defaults.withCredentials = true;
 
 function NewProduct() {
+  const { role } = useContext(CartContext)
+  const navigate = useNavigate()
+
+ 
+
+  useEffect(() => {
+     if (role === 0) {
+       navigate("/");
+     }
+  }, [])
+  
   const [productData, setProductData] = useState({
     title: "",
     description: "",
@@ -70,6 +85,8 @@ function NewProduct() {
   };
 
   return (
+    <>
+      {role === 0 ? null :
     <Card maxW="50vw" m="20px auto" p={10}>
       <Heading>Crear Producto</Heading>
       <form onSubmit={handleSubmit}>
@@ -152,6 +169,9 @@ function NewProduct() {
         <Button type="submit">Submit</Button>
       </form>
     </Card>
+    
+    }
+    </>
   );
 }
 

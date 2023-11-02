@@ -122,7 +122,6 @@ passport.use(
     {
       jwtFromRequest: jwt.ExtractJwt.fromExtractors([
         (req) => {
-          console.log(req.cookies, "cookie")
           return req?.cookies["token"]
         },
       ]),
@@ -130,7 +129,6 @@ passport.use(
     },
    
     async (payload, done) => {
-       console.log(payload);
       try {
         const model = new User();
         let one = await model.readCurrent(

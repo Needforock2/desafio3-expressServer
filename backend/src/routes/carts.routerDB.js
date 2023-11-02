@@ -56,7 +56,6 @@ router.post(
   passport.authenticate("jwt"),
   async (req, res, next) => {
     let { cid, pid } = req.params;
-   // console.log(req.user)
     try {
       const cart = await Cart.findOne({ _id: cid });
       const productObjectId = new ObjectId(pid);

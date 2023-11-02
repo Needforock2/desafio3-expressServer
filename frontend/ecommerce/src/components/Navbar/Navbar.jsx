@@ -17,17 +17,22 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { Login } from "../Login/Login";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import swal from "sweetalert";
 import { Register } from "../Register/Register";
+import { PassResetReq } from "../Pass_Reset/PassResetReq";
+import { CartContext } from "../../store/context";
+
 
 axios.defaults.withCredentials = true;
 
 export const NavBar = () => {
+  const {role, setRole} = useContext(CartContext)
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [session, setSession] = useState(false);
   const [register, setRegister] = useState(false);
+  const [reset, setReset] = useState(false)
   const [user, setUser] = useState({});
   const navigate = useNavigate()
 
@@ -37,6 +42,12 @@ export const NavBar = () => {
     onClose();
   };
 
+  const successReset = () => {
+    onClose()
+    setRegister(false)
+    setReset(false)
+  }
+
   const successRegister = () => {
     onClose();
   }
@@ -44,6 +55,9 @@ export const NavBar = () => {
   const handleRegister = () => {
     setRegister(!register);
   };
+  const handleReset = () => {
+    setReset(!reset)
+  }
 
   const getUser = async () => {
     const url2 = "http://localhost:8080/api/sessions/current";
@@ -52,7 +66,8 @@ export const NavBar = () => {
      
         const resp = await axios.get(url2);
         user = resp.data.user[0];
-        setUser(user);
+      setUser(user);
+      setRole(user.role)
         user.cart?._id && sessionStorage.setItem("cid", user.cart._id);
         user ? setSession(true) : setSession(false);
      
@@ -86,7 +101,7 @@ export const NavBar = () => {
       });
       sessionStorage.removeItem("cid");
       sessionStorage.removeItem("session")
-
+      setRole(0)
       setSession(false);
       navigate("/");
     } catch (error) {
@@ -110,7 +125,7 @@ export const NavBar = () => {
         </div>
         <Flex gap={10} justifyContent="center" alignItems="center">
           <>
-            {user.role === 1 || user.role === 2 ? (
+            {session && (role === 1 || role === 2) ? (
               <NavLink to={`/new_product`}>Crear Producto</NavLink>
             ) : null}
             {session ? (
@@ -144,7 +159,11 @@ export const NavBar = () => {
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              {register ? "Regístrate" : "Inicia sesión en tu cuenta"}
+              {register
+                ? "Regístrate"
+                : reset
+                ? "Reestablece tu Clave"
+                : "Inicia sesión en tu cuenta"}
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
@@ -153,10 +172,13 @@ export const NavBar = () => {
                   successRegister={successRegister}
                   handleRegister={handleRegister}
                 />
+              ) : reset ? (
+                <PassResetReq successReset={successReset}  handleReset={handleReset}/>
               ) : (
                 <Login
                   successLogin={successLogin}
                   handleRegister={handleRegister}
+                  handleReset={handleReset}
                 />
               )}
             </ModalBody>
