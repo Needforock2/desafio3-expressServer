@@ -10,7 +10,8 @@ export default class ProductDto {
     this.status = obj.status;
     this.stock = obj.stock;
     this.category = obj.category;
-      this.thumbnails = obj.thumbnails;
+    this.thumbnails = obj.thumbnails;
+    this.owner = obj.owner
     if (args.persistance === "FS") {
       this.createdAt = new Date();
       this.updatedAt = new Date();

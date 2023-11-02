@@ -16,12 +16,12 @@ export default class ProductsService {
     let response = this.repository.readOneRep(data);
     return response;
   }
-  updateService(id, data) {
-    let response = this.repository.updateRep(id, data);
+  updateService(id, data, owner) {
+    let response = this.repository.updateRep(id, data, owner);
     return response;
   }
-  destroyService(data) {
-    let response = this.repository.destroyRep(data);
+  destroyService(data,owner) {
+    let response = this.repository.destroyRep(data,owner);
     return response;
   }
 }

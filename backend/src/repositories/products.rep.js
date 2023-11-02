@@ -13,6 +13,6 @@ export default class ProductsRepository{
     }
     readRep = (query, options)=> this.model.readModel(query, options)
     readOneRep = (id) => this.model.readOneModel(id)
-    updateRep = (id, data) => this.model.updateModel(id, data)
-    destroyRep = (data) => this.model.destroyModel(data)
+    updateRep = (id, data, owner) => this.model.updateModel(id, data, owner)
+    destroyRep = (data, owner) => this.model.destroyModel(data, owner)
 }

@@ -22,26 +22,77 @@ export default class ProductPersistance {
       return null;
     }
   }
-  async updateModel(id, data) {
-    let one = await Product.findByIdAndUpdate(id, data);
-    if (one) {
-      return {
-        success: true,
-        message: `product id: ${one._id} modified`,
-      };
-    } else {
-      return null;
+  async updateModel(id, data, owner) {
+    try {
+      if (owner.role === 1) {
+        let one = await Product.findByIdAndUpdate(id, data);
+        if (one) {
+          return {
+            success: true,
+            message: `product id: ${one._id} modified`,
+          };
+        } else {
+          return null;
+        }
+      } else {
+        let one = await Product.findById(id);
+        if (one) {
+          if (one.owner === owner.mail) {
+            await Product.findOneAndUpdate(
+              { _id: id, owner: owner.mail },
+              data
+            );
+            return {
+              success: true,
+              message: `product id: ${one._id} modified`,
+            };
+          } else {
+            return {
+              success: false,
+              message: "no authorized",
+            };
+          }
+        } else {
+          return null;
+        }
+      }
+    } catch (error) {
+      return error;
     }
   }
-  async destroyModel(data) {
-    let one = await Product.findByIdAndDelete(data);
-    if (one) {
-      return {
-        success: true,
-        message: `product id: ${one._id} deleted`,
-      };
-    } else {
-      return null;
+  async destroyModel(id, owner) {
+    try {
+      if (owner.role === 1) {
+        let one = await Product.findByIdAndDelete(id);
+        if (one) {
+          return {
+            success: true,
+            message: `product id: ${one._id} deleted`,
+          };
+        } else {
+          return null;
+        }
+      } else {
+        let one = await Product.findById(id);
+        if (one) {
+          if (one.owner === owner.mail) {
+            await Product.findOneAndDelete(id);
+            return {
+              success: true,
+              message: `product id: ${one._id} deleted`,
+            };
+          } else {
+            return {
+              success: false,
+              message: "no authorized",
+            };
+          }
+        } else {
+          return null;
+        }
+      }
+    } catch (error) {
+      return error;
     }
   }
 }

@@ -121,11 +121,16 @@ passport.use(
   new jwt.Strategy(
     {
       jwtFromRequest: jwt.ExtractJwt.fromExtractors([
-        (req) => req?.cookies["token"],
+        (req) => {
+          console.log(req.cookies, "cookie")
+          return req?.cookies["token"]
+        },
       ]),
       secretOrKey: process.env.SECRET_TOKEN,
     },
+   
     async (payload, done) => {
+       console.log(payload);
       try {
         const model = new User();
         let one = await model.readCurrent(

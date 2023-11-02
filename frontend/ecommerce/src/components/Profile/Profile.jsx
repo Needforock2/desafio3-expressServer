@@ -14,11 +14,11 @@ const Profile = () => {
        const url2 = "http://localhost:8080/api/sessions/current";
        let user = "";
        try {
-         if (document.cookie) {
+        // if (document.cookie) {
            const resp = await axios.get(url2);
            user = resp.data.user[0];
      
-         }
+        // }
        } catch (error) {
          swal({
            title: "Error",

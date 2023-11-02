@@ -4,7 +4,7 @@ import User from "../dao/mongo/models/user.js";
 import MyError from "../config/MyError.js";
 import errors from "../config/errors.js";
 
-const { notRegistered, authenticated, notFound, authorized, credentials } = errors;
+const { notRegistered, authenticated, notFound, authorized, credentials, duplicate } = errors;
 
 export default class MyRouter {
   constructor() {
@@ -35,6 +35,7 @@ export default class MyRouter {
     res.sendNoAuthorizedError = (error) =>
       MyError.new(authorized(error).message, authorized(error).code);
     res.sendInvalidCredentials = () => MyError.new(credentials.message, credentials.code)
+    res.sendDuplicate = () => MyError.new(duplicate.message, duplicate.code)
     return next();
   };
   handlePolicies = (policies) => async (req, res, next) => {
@@ -54,7 +55,8 @@ export default class MyRouter {
           const role = user.role;
           if (
             (policies.includes("USER") && role === 0) ||
-            (policies.includes("ADMIN") && role === 1)
+            (policies.includes("ADMIN") && role === 1) ||
+            (policies.includes("PREMIUM") && role === 2)
           ) {
             req.user = user;
             return next();

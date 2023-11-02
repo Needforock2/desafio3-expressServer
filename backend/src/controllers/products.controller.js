@@ -18,12 +18,12 @@ export default class ProductsController {
     let response = this.service.readOneService(data);
     return response;
   }
-  updateController(id, data) {
-    let response = this.service.updateService(id, data);
+  updateController(id, data, owner) {
+    let response = this.service.updateService(id, data, owner);
     return response;
   }
-  destroyController(data) {
-    let response = this.service.destroyService(data);
+  destroyController(data, owner) {
+    let response = this.service.destroyService(data, owner);
     return response;
   }
 }

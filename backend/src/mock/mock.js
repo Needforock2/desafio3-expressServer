@@ -8,12 +8,15 @@ export default async function mocking() {
   const mongo = new MongoConnect(config.DATABASE_URL);
   mongo.connect_mongo();
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 10; i++) {
+      console.log("mockinb");
     const product = {
       title: faker.commerce.product(),
       description: faker.commerce.productDescription(),
       code: faker.number.int({ min: 1, max: 1000 }),
       price: faker.commerce.price({ min: 100, max: 2000 }),
+    
+
       status: true,
       stock: faker.number.int({ min: 1, max: 1000 }),
       category: faker.commerce.department(),
@@ -29,4 +32,4 @@ export default async function mocking() {
   }
 }
 
-mocking();
+//mocking();

@@ -32,9 +32,10 @@ export default function ProductCard({ producto }) {
        });
       setIsEmpty(false)
     } catch (error) {
+      console.log(error)
       swal({
         title: "Ooops",
-        text: "Debes Iniciar sesión",
+        text: `${error.response.data.message}`,
         icon: "error",
       });
     }
