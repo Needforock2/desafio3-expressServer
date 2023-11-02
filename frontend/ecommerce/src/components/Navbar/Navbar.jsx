@@ -32,6 +32,7 @@ export const NavBar = () => {
   const navigate = useNavigate()
 
   const successLogin = () => {
+    sessionStorage.setItem("session", true)
     setSession(true);
     onClose();
   };
@@ -48,13 +49,13 @@ export const NavBar = () => {
     const url2 = "http://localhost:8080/api/sessions/current";
     let user = "";
     try {
-      if (document.cookie) {
+     
         const resp = await axios.get(url2);
         user = resp.data.user[0];
         setUser(user);
         user.cart?._id && sessionStorage.setItem("cid", user.cart._id);
         user ? setSession(true) : setSession(false);
-      }
+     
     } catch (error) {
       swal({
         title: "Error",
@@ -64,7 +65,10 @@ export const NavBar = () => {
     }
   };
   useEffect(() => {
-    getUser();
+    const localSession = sessionStorage.getItem("session") 
+    if (localSession ) {      
+      getUser();
+    }
   }, [session]);
 
   useEffect(() => {
@@ -81,8 +85,8 @@ export const NavBar = () => {
         icon: "success",
       });
       sessionStorage.removeItem("cid");
-      document.cookie =
-        "token" + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      sessionStorage.removeItem("session")
+
       setSession(false);
       navigate("/");
     } catch (error) {
@@ -106,7 +110,7 @@ export const NavBar = () => {
         </div>
         <Flex gap={10} justifyContent="center" alignItems="center">
           <>
-            {user.role === 1 ? (
+            {user.role === 1 || user.role === 2 ? (
               <NavLink to={`/new_product`}>Crear Producto</NavLink>
             ) : null}
             {session ? (

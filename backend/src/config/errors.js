@@ -11,6 +11,6 @@ export default {
             message: payload, code: 403
         }
     },
-    credentials: {message: "invalid credentials", code:401}
-    
+    credentials: {message: "invalid credentials", code:401},
+    duplicate: {message: "duplicate code", code:409}
 }

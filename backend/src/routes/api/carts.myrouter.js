@@ -4,6 +4,9 @@ import AuthController from "../../controllers/auth.controller.js";
 import args from "../../config/arguments.js"; //necesito saber la persistencia
 import transporter from "../../config/transporter.js";
 import config from "../../config/env.js";
+import is_valid_product_id from "../../middlewares/is_valid_product_id.js";
+import is_user_premium from "../../middlewares/is_user_premium.js";
+import is_valid_cart_id from "../../middlewares/is_valid_cart_id.js";
 
 const cartsController = new CartsController();
 const userController = new AuthController();
@@ -11,7 +14,7 @@ const userController = new AuthController();
 export default class CartsRouter extends MyRouter {
   init() {
     //create
-    this.post("/", ["USER", "ADMIN"], async (req, res, next) => {
+    this.post("/", ["USER", "ADMIN", "PREMIUM"], async (req, res, next) => {
       try {
         let data = req.body;
         const mail = req.user.mail;
@@ -31,7 +34,7 @@ export default class CartsRouter extends MyRouter {
       }
     });
     //READ CART
-    this.read("/:cid", ["USER", "ADMIN"], async (req, res, next) => {
+    this.read("/:cid", ["USER", "ADMIN", "PREMIUM"], async (req, res, next) => {
       try {
         let { cid } = req.params;
         let sortedCart = await cartsController.read(cid);
@@ -44,7 +47,10 @@ export default class CartsRouter extends MyRouter {
     //UPDATE CART WITH a PRODUCT
     this.post(
       "/:cid/products/:pid",
-      ["USER", "ADMIN"],
+      ["USER", "ADMIN","PREMIUM"],
+      is_valid_product_id,
+      is_valid_cart_id,
+      is_user_premium,
       async (req, res, next) => {
         try {
           let response = await cartsController.update(req.params);
@@ -58,7 +64,9 @@ export default class CartsRouter extends MyRouter {
     //UPDATE THE QUANTITY OF A PRODUCT IN THE CART
     this.put(
       "/:cid/products/:pid",
-      ["USER", "ADMIN"],
+      ["USER", "ADMIN", "PREMIUM"],
+      is_valid_product_id,
+      is_valid_cart_id,
       async (req, res, next) => {
         try {
           let { qty } = req.body;
@@ -73,7 +81,9 @@ export default class CartsRouter extends MyRouter {
     //DELETE ONE PRODUCT FROM THE CART
     this.delete(
       "/:cid/products/:pid",
-      ["USER", "ADMIN"],
+      ["USER", "ADMIN", "PREMIUM"],
+      is_valid_product_id,
+      is_valid_cart_id,
       async (req, res, next) => {
         try {
           let response = await cartsController.delete(req.params);
@@ -85,31 +95,42 @@ export default class CartsRouter extends MyRouter {
     );
 
     //DELETE ALL PRODUCTS FROM THE CART
-    this.delete("/:cid", ["USER", "ADMIN"], async (req, res, next) => {
-      try {
-        let response = await cartsController.deleteAll(req.params);
-        return res.sendSuccess(response);
-      } catch (error) {
-        next(error);
+    this.delete(
+      "/:cid",
+      ["USER", "ADMIN", "PREMIUM"],
+      is_valid_cart_id,
+      async (req, res, next) => {
+        try {
+          let response = await cartsController.deleteAll(req.params);
+          return res.sendSuccess(response);
+        } catch (error) {
+          next(error);
+        }
       }
-    });
+    );
 
     //SUM the CART TOTAL
-    this.read("/bills/:cid", ["USER", "ADMIN"], async (req, res, next) => {
-      try {
-        let { cid } = req.params;
-        let response = await cartsController.sumAll(cid);
-        return res.sendSuccess(response);
-      } catch (error) {
-        next(error);
+    this.read(
+      "/bills/:cid",
+      ["USER", "ADMIN", "PREMIUM"],
+      is_valid_cart_id,
+      async (req, res, next) => {
+        try {
+          let { cid } = req.params;
+          let response = await cartsController.sumAll(cid);
+          return res.sendSuccess(response);
+        } catch (error) {
+          next(error);
+        }
       }
-    });
+    );
 
     //DELETE CART
 
     this.delete(
       "/payment-success/:cid",
-      ["USER", "ADMIN"],
+      ["USER", "ADMIN", "PREMIUM"],
+      is_valid_cart_id,
       async (req, res, next) => {
         let mail = req.user.mail;
         try {

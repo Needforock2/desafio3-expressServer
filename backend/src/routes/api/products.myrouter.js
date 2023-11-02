@@ -6,9 +6,13 @@ const productsController = new ProductsController();
 export default class ProductRouter extends MyRouter {
   init() {
     //CREATE
-    this.post("/", ["ADMIN"], async (req, res, next) => {
+    this.post("/", ["ADMIN","PREMIUM"], async (req, res, next) => {
       try {
+        console.log(req.user)
         let data = req.body;
+        if (req.user.role === 2) {
+          data.owner = req.user.mail;
+        }        
         let response = await productsController.createController(data);
         return res.sendSuccessCreate(response);
       } catch (error) {
@@ -115,34 +119,43 @@ export default class ProductRouter extends MyRouter {
     });
 
     //UPDATE
-    this.put("/:pid", ["ADMIN"], async (req, res, next) => {
+    this.put("/:pid", ["ADMIN","PREMIUM"], async (req, res, next) => {
       let { pid } = req.params;
       try {
         let data = req.body;
-        let response = await productsController.updateController(pid, data);
+        let owner = req.user
+        let response = await productsController.updateController(pid, data, owner);
         if (response) {
-          return res.sendSuccess(response);
+          if (response.success) {
+            return res.sendSuccess(response);            
+          } else {      
+              if (response.codeName && response.codeName === "DuplicateKey") {
+                return res.sendDuplicate();
+              }    
+            return res.sendNoAuthorizedError(response.message);
+          }
         } else {
           return res.sendNotFound();
         }
-      } catch (error) {
-        res.sendNotFound();
-        next(error);
+      } catch (error) {       
+        next(error)
       }
     });
 
     //DELETE BY ID
-    this.delete("/:pid", ["ADMIN"], async (req, res, next) => {
+    this.delete("/:pid", ["ADMIN", "PREMIUM"], async (req, res, next) => {
       let { pid } = req.params;
       try {
-        let one = await productsController.destroyController(pid);
+        let one = await productsController.destroyController(pid, req.user);
         if (one) {
-          return res.sendSuccess(one);
+          if (one.success) {
+            return res.sendSuccess(one);            
+          }
+          return res.sendNoAuthorizedError(one.message)
         } else {
           return res.sendNotFound();
         }
       } catch (error) {
-        res.sendNotFound();
         next(error);
       }
     });

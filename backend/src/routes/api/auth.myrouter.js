@@ -44,13 +44,13 @@ export default class AuthRouter extends MyRouter {
         try {
           req.session.mail = req.body.mail;
           req.session.role = req.user.role;
-          const controller = new AuthController();
-          let response = await controller.login();
+          let response = await authController.login();
           if (response) {
             return res
               .cookie("token", req.session.token, {
                 maxAge: 60 * 60 * 25 * 7 * 1000,
-                httpOnly: false,
+                httpOnly: true,
+                sameSite: "lax"
               })
               .sendSuccess({
                 session: req.session,
@@ -67,13 +67,12 @@ export default class AuthRouter extends MyRouter {
     //logout
     this.post(
       "/logout",
-      ["USER", "ADMIN"],
+      ["USER", "ADMIN", "PREMIUM"],
       passport.authenticate("jwt", { session: false }),
       async (req, res, next) => {
           try {
               req.session.destroy();
-              const controller = new AuthController()
-              await controller.logout()
+              await authController.logout()
               res.cookie("token", "", { expires: new Date(0) });
               return res.sendSuccess({
                 success: true,
@@ -85,5 +84,18 @@ export default class AuthRouter extends MyRouter {
         }
       }
     );
+
+    //ROL CHANGING
+    this.put("/premium/:uid", ["USER", "PREMIUM"], async (req, res, next) => {
+      try {
+        let { uid } = req.params;
+        let response = await authController.changeRole(uid)
+        if (response) {
+          return res.sendSuccess(response);
+        }
+      } catch (error) {
+        next(error)
+      }
+    });
   }
 }
