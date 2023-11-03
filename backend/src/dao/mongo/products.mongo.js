@@ -74,12 +74,9 @@ export default class ProductPersistance {
         }
       } else {
         let one = await Product.findById(id);
-        console.log("owner", owner.mail)
-        console.log("one", one.owner);
-        console.log(id)
         if (one) {
           if (one.owner === owner.mail) {
-            let deleted = await Product.findOneAndDelete({_id: id});
+           await Product.findOneAndDelete({_id: id});
             return {
               success: true,
               message: `product id: ${one._id} deleted`,
