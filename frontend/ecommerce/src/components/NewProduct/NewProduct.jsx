@@ -31,7 +31,7 @@ function NewProduct() {
     title: "",
     description: "",
     price: "",
-    thumbnail: "",
+    thumbnails: "",
     code: "",
     stock: "",
     category: "",
@@ -127,8 +127,8 @@ function NewProduct() {
           <Input
             required
             type="text"
-            name="thumbnail"
-            value={productData.thumbnail}
+            name="thumbnails"
+            value={productData.thumbnails}
             onChange={handleInputChange}
           />
         </FormLabel>

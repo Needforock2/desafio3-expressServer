@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import "./navbar.css";
 import { CartWidget } from "../CartWidget/CartWidget";
 import {
@@ -15,6 +15,9 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Button,
+  Heading,
+  useTheme, Link
 } from "@chakra-ui/react";
 import { Login } from "../Login/Login";
 import { useContext, useEffect, useState } from "react";
@@ -23,11 +26,13 @@ import swal from "sweetalert";
 import { Register } from "../Register/Register";
 import { PassResetReq } from "../Pass_Reset/PassResetReq";
 import { CartContext } from "../../store/context";
-
+ 
 
 axios.defaults.withCredentials = true;
 
 export const NavBar = () => {
+  const theme = useTheme();
+   const textColor = theme.colors.custom.text;
   const {role, setRole} = useContext(CartContext)
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [session, setSession] = useState(false);
@@ -118,11 +123,16 @@ export const NavBar = () => {
   return (
     <>
       <header className="App-header d-flex col-12 justify-content-between">
-        <div className="">
-          <NavLink className={"brand"} to={`/`}>
-            Cachupines.cl
-          </NavLink>
-        </div>
+        <NavLink
+          style={{
+            background: "none",
+          }}
+          color={textColor}
+          size="6xl"
+          to='/'
+        >
+          <Heading fontSize="6xl">CACHUPINES</Heading>
+        </NavLink>
         <Flex gap={10} justifyContent="center" alignItems="center">
           <>
             {session && (role === 1 || role === 2) ? (
@@ -173,7 +183,10 @@ export const NavBar = () => {
                   handleRegister={handleRegister}
                 />
               ) : reset ? (
-                <PassResetReq successReset={successReset}  handleReset={handleReset}/>
+                <PassResetReq
+                  successReset={successReset}
+                  handleReset={handleReset}
+                />
               ) : (
                 <Login
                   successLogin={successLogin}
