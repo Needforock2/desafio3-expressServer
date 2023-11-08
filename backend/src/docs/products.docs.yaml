@@ -1,0 +1,431 @@
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        title:
+          description: Nombre del producto
+          type: string
+        description:
+          description: Descripcion del producto
+          type: string
+        code:
+          description: Codigo sku del producto
+          type: number
+        price:
+          description: Precio del producto
+          type: number
+        status:
+          description: Indicador de si el producto esta activo (true) o inactivo (false)
+          type: boolean
+        stock:
+          description: Número de articulos disponibles para la venta
+          type: number
+        category:
+          description: Categoría a la que pertenece el producto
+          type: string
+        thumbnails:
+          description: Dirección url de la foto del producto
+          type: string
+      example:
+        title: Sony camera
+        description: Professional mirrorless camera
+        price: 3799
+        thumnails: https://www.sony.cl/image/a09b5c65a4a30b0a4d666c155803028c?fmt=pjpeg&wid=1200&hei=470&bgcolor=F1F5F9&bgc=F1F5F9
+        code: 59
+        stock: 2
+        category: cameras
+        status: true
+    ProductUpdate:
+      type: object
+      properties:
+        title:
+          description: Nombre del producto
+          type: string
+        description:
+          description: Descripcion del producto
+          type: string
+        code:
+          description: Codigo sku del producto
+          type: number
+        price:
+          description: Precio del producto
+          type: number
+        status:
+          description: Indicador de si el producto esta activo (true) o inactivo (false)
+          type: boolean
+        stock:
+          description: Número de articulos disponibles para la venta
+          type: number
+        category:
+          description: Categoría a la que pertenece el producto
+          type: string
+        thumbnails:
+          description: Dirección url de la foto del producto
+          type: string
+      example:
+        title: Sony playstation
+  responses:
+    create:
+      type: object
+      properties:
+        status: indicador del estado de la respuesta
+        message: mensaje indicando que el producto fue creado
+        response: objeto con el _id del producto creado
+      example:
+        status: success
+        message: product created
+        response:
+          product_id: 65442864681055539c11067f
+    read:
+      type: object
+      properties:
+        _id: ObjectID del producto
+        title: Nombre del producto
+        description: descripcion del producto
+        code: numero sku del producto
+        price: precio del producto en dolares
+        status: indicador de si el producto esta activo o no
+        stock: articulos en stock
+        category: categoria del producto
+        thumbnails: url de la foto del producto
+        owner: usuario que creó el producto
+        __v: version del documento
+      example:
+        _id: 65442864681055539c11067f
+        title: Table,
+        description: Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles,
+        code: 924,
+        price: 520,
+        status: true,
+        stock: 131,
+        category: Clothing,
+        thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+        owner: admin,
+        __v: 0
+    readAll:
+      type: object
+      properties:
+        status: indicador del estado de la respuesta
+        payload: devuelve los documentos "producto" de la base de datos
+        totalPages: numero total de paginas de la paginacion
+        prevPage: numero de la pagina anterior
+        nextPage:
+        page:
+        hasPrevPage:
+        hasNextPage:
+        nextLink:
+        prevLink:
+      example:
+        status: success
+        totalPages: 10
+        prevPage: 2
+        nextPage: 4
+        page: 3
+        hasPrevPage: true
+        hasNextPage: true
+        nextLink: http://localhost:8080/api/products?limit=6&page=4&title=table
+        prevLink: http://localhost:8080/api/products?limit=6&page=2&title=table
+        payload:
+          - _id: 65442864681055539c11067f
+            title: Table,
+            description: Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles,
+            code: 924,
+            price: 520,
+            status: true,
+            stock: 131,
+            category: Clothing,
+            thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+            owner: admin,
+            __v: 0
+          - _id: 65442864681055539c110681
+            title: Table,
+            description: New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016
+            code: 345,
+            price: 550,
+            status: true,
+            stock: 151,
+            category: Clothing,
+            thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+            owner: admin,
+            __v: 0
+          - _id: 65442864681055539c110685
+            title: Table,
+            description: The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality
+            code: 5656,
+            price: 5255,
+            status: true,
+            stock: 5,
+            category: Clothing,
+            thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+            owner: admin,
+            __v: 0
+    auth:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/products
+        message: unauthenticated
+    forbidden:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/products
+        message: Unauthorized
+    notFound:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/products
+        message: Producto no encontrado
+    fatal:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/products
+        message: Internal server error
+    securitySchemes:
+      cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+paths:
+  /api/products:
+    post:
+      summary: Crear un nuevo producto
+      tags:
+        - Product
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/Product"
+      responses:
+        "201":
+          description: Éxito en la carga de un producto
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/create"
+        "401":
+          description: Usuario no autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/auth"
+        "403":
+          description: Usuario no Autorizado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/forbidden"
+        "500":
+          description: Falla del servidor al crear un producto
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"
+    get:
+      summary: Leer los productos de la base de datos
+      tags:
+        - Product
+      parameters:
+        - name: page
+          in: query
+          type: integer
+          description: Numero de página a mostrar
+        - name: limit
+          in: query
+          type: integer
+          description: Numero de documentos a mostrar por página
+        - name: title
+          in: query
+          type: string
+          description: texto para filtrar los productos por titulos
+      responses:
+        "200":
+          description: Éxito en la lectura de productos
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/readAll"
+        "404":
+          description: Documento/s no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/notFound"
+        "500":
+          description: Falla del servidor al leer los productos
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"
+  /api/products/{pid}:
+    get:
+      summary: Leer un producto
+      tags:
+        - Product
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ObjectId del producto a leer
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Éxito en la lectura de un producto
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/read"
+        "404":
+          description: Documento/s no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/notFound"
+        "500":
+          description: Falla del servidor al editar un producto
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"
+    put:
+      summary: Editar un producto
+      tags:
+        - Product
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ObjectId del producto actualizar
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/ProductUpdate"
+      responses:
+        "200":
+          description: Éxito al actualizar el producto
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/read"
+        "401":
+          description: Credenciales invalidas
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/auth"
+        "403":
+          description: Acceso no permitido
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/forbidden"
+        "404":
+          description: Documento/s no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/notFound"
+        "500":
+          description: Falla del servidor al crear un producto
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"
+    delete:
+      summary: Eliminar un producto
+      tags:
+        - Product
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ObjectId del producto actualizar
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Éxito al eliminar el producto
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/read"
+        "401":
+          description: Credenciales invalidas
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/auth"
+        "403":
+          description: Acceso no permitido
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/forbidden"
+        "404":
+          description: Documento/s no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/notFound"
+        "500":
+          description: Falla del servidor al eliminar un producto
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"

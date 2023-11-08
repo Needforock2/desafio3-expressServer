@@ -8,7 +8,7 @@ export default async function mocking() {
   const mongo = new MongoConnect(config.DATABASE_URL);
   mongo.connect_mongo();
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 100; i++) {
       console.log("mockinb");
     const product = {
       title: faker.commerce.product(),

@@ -1,0 +1,348 @@
+components:
+  schemas:
+    Register:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: Nombre del usuario
+        last_name:
+          type: string
+          description: Apellido del usuario
+        photo:
+          type: string
+          description: url de la foto de perfil
+        mail:
+          type: string
+          description: Email registrado
+        age:
+          type: number
+          description: edad del usuario
+        password:
+          type: string
+          description: Contraseña guardada en la base de datos
+      example:
+        first_name: Emiliano
+        last_name: Coder
+        mail: emilio@coder.com
+        password: coder1234
+    Login:
+      type: object
+      properties:
+        mail:
+          type: string
+          description: Email registrado
+        password:
+          type: string
+          description: Contraseña guardada en la base de datos
+      example:
+        mail: igna@coder.com
+        password: hola1234
+    Reset:
+      type: object
+      properties:
+        mail:
+          type: string
+          description: email para solicitar enlace de reseteo de contraseña
+      example:
+        mail: correo@coder.com
+    NewPass:
+      type: object
+      properties:
+        mail:
+          type: string
+          description: nueva contraseña
+      example:
+        password: nuevopassword
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  responses:
+    register:
+      type: object
+      properties:
+        sucess:
+          type: string
+          description: Estado de la solicitud
+        message:
+          type: string
+          description: Mensaje informativo
+        userId:
+          type: string
+          description: ObjectId del usuario que se acaba de crear
+      example:
+        success: true
+        message: Usuario registrado
+        userid: 654bcecb9a74c5d775fc0b2e
+    login:
+      type: object
+      properties:
+        session:
+          type: object
+          description: Informacion de la sesion
+        message:
+          type: string
+          description: Descripcion de la operación realizada
+      example:
+        session: 
+          cookie:
+            originalMaxAge: null
+            expires: null
+            httpOnly: true
+            path: /
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhbmllbG1hY2hhZG84NkB5YWhvby5jb20iLCJpYXQiOjE2OTk0NzAwMjksImV4cCI6MTY5OTU1NjQyOX0.hnxt9GHiHM3WKlsK1D78tzcFt1_r-lizNaD6IeO5r40
+          mail: correoregistrado@gmail.com
+          role: 2
+        message: usuario inició sesión
+    signout:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Estado de la solicitud
+        message:
+          type: string
+          description: Descripcion de la operación realizada
+      example:
+        status: success
+        message: Signed out
+    pass_req:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Estado de la solicitud
+        message:
+          type: string
+          description: Descripcion de la operación realizada
+      example:
+        status: success
+        message: Enlace de reestablecimiento de contraseña enviado a tu correo
+    pass_reset:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Estado de la solicitud
+        message:
+          type: string
+          description: Descripcion de la operación realizada
+      example:
+        status: success
+        message: Contraseña cambiada
+    auth:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/auth
+        message: invalid credentials
+    incomplete:
+      type: object
+      properties:
+        success:
+          type: string
+          description: indica si la operacion fue exitosa o no
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        success: false
+        message: please fill out all fields
+    fatal:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/auth
+        message: Internal server error
+paths:
+  /api/auth/register:
+    post:
+      summary: Registrar un usuario
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        description: objeto con las propiedades necesarias/mínimas para registrar un usuario
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+      responses:
+        '201':
+          description: El éxito retorna el id del usuario registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/register'
+        "400":
+          description: Campos faltantes y/o correo duplicado
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/incomplete'
+        "500":
+          description: Servidor caído
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/fatal'
+  /api/auth/login:
+    post:
+      summary: Iniciar sesión
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        description: objeto con las propiedades necesarias/mínimas para iniciar sesión
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: El éxito retorna una cookie "token" para enviar en las peticiones que requieran autenticación
+          headers: 
+            Set-Cookie:
+              schema: 
+                type: string
+                example: token=yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiaWduYSBjb2RlciIsInJvbGUiOiJ1c2VyIiwiZW1haWwiOiJpZ25hQGNvZGVyLmNvbSIsImlhdCI6MTY5ODg0MjkzNSwiZXhwIjoxNjk4ODQ2NTM1fQ.FfpFL2XuKTp0MW6F_M8dy5qbKqHtYsw4mDET2611ddI
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/login'
+        "400":
+          description: Campos faltantes
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/incomplete'
+        "401":
+          description: Credenciales invalidas
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/auth'
+        "500":
+          description: Servidor caído
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/fatal'
+  /api/auth/logout:
+    post:
+      summary: Cerrar sesión
+      tags:
+        - Auth
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Éxito en el cierre de sesion
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/signout'
+        "401":
+          description: Usuario no autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/auth'
+        "500":
+          description: Servidor caído
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/fatal'
+  /api/auth/reset_req:
+    post:
+      summary: Solicitar enlace por correo para cambio de contraseña
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        description: Objeto con el correo electronico del usuario que resetea su contraseña
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reset'
+      responses:
+        "200":
+          description: Éxito en el envio de enlace de cambio de contraseña
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/pass_req'
+        "400":
+          description: Campos faltantes
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/incomplete'
+        "401":
+          description: Credenciales Invalidas
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/auth'
+        "500":
+          description: Servidor caído
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/fatal'
+  /api/auth/pass_reset:
+    post:
+      summary: Cambiar contraseña. Se debe enviar un token (recibido en el enlace por correo) través de header bearer authorization
+      tags:
+        - Auth
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: objeto con el nuevo password
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPass'
+      responses:
+        "200":
+          description: Éxito en el cambio de la contraseña
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/pass_reset'
+        "401":
+          description: Credenciales Invalidas / token expirado o invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/auth'
+        "500":
+          description: Servidor caído
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/fatal'
+    

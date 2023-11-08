@@ -16,6 +16,9 @@ import config from "./config/env.js";
 import error_handler from "./middlewares/errorHandler.js";
 import winston from "./middlewares/winston.js";
 import not_found_handler from "./middlewares/not_found_handler.js";
+import swaggerOptions from "./config/swagger.js";
+import swaggerJSDoc from "swagger-jsdoc"
+import {serve, setup} from "swagger-ui-express"
 
 
 const port = program.p;
@@ -27,6 +30,9 @@ const ready = () => {
   console.log("server ready on port " + PORT);
 
 };
+
+
+
 
 const app = express();
 
@@ -54,12 +60,19 @@ inicializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(winston);
+//documentacion --->
+const specs = swaggerJSDoc(swaggerOptions);
+
+app.use("/api/docs", serve, setup(specs));
+//<---- documentacion
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }))
+
 app.use(express.static(`${__dirname}/public`));
 app.use("/", router);
-app.use(error_handler)
-app.use(not_found_handler)
+
+
+
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
@@ -76,7 +89,8 @@ app.use("/", viewsRouter);
 app.use("/api/cookies", cookies_router);
 app.use("/api/sessions", sessions_router);
 app.use("/api/auth", auth_router); */
-
+app.use(error_handler);
+app.use(not_found_handler);
 const server = app.listen(PORT, ready);
 
 export const io = new Server(server);
