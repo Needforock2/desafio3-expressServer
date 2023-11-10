@@ -27,6 +27,9 @@ components:
         thumbnails:
           description: Dirección url de la foto del producto
           type: string
+        owner:
+          decription: correo del usuario que creó el articulo
+          type: string
       example:
         title: Sony camera
         description: Professional mirrorless camera
@@ -36,6 +39,99 @@ components:
         stock: 2
         category: cameras
         status: true
+        owner: correo@gmail.com
+    ProductRead:
+      type: object
+      properties:
+        title:
+          description: Nombre del producto
+          type: string
+        description:
+          description: Descripcion del producto
+          type: string
+        code:
+          description: Codigo sku del producto
+          type: number
+        price:
+          description: Precio del producto
+          type: number
+        status:
+          description: Indicador de si el producto esta activo (true) o inactivo (false)
+          type: boolean
+        stock:
+          description: Número de articulos disponibles para la venta
+          type: number
+        category:
+          description: Categoría a la que pertenece el producto
+          type: string
+        thumbnails:
+          description: Dirección url de la foto del producto
+          type: string
+        owner:
+          decription: correo del usuario que creó el articulo
+          type: string
+        __v:
+          description: version del documento
+          type: number
+      example:
+        title: Sony camera
+        description: Professional mirrorless camera
+        price: 3799
+        thumnails: https://www.sony.cl/image/a09b5c65a4a30b0a4d666c155803028c?fmt=pjpeg&wid=1200&hei=470&bgcolor=F1F5F9&bgc=F1F5F9
+        code: 59
+        stock: 2
+        category: cameras
+        status: true
+        owner: correo@gmail.com
+        __v: 0
+    ProductQty:
+      type: object
+      properties:
+        title:
+          description: Nombre del producto
+          type: string
+        description:
+          description: Descripcion del producto
+          type: string
+        code:
+          description: Codigo sku del producto
+          type: number
+        price:
+          description: Precio del producto
+          type: number
+        status:
+          description: Indicador de si el producto esta activo (true) o inactivo (false)
+          type: boolean
+        stock:
+          description: Número de articulos disponibles para la venta
+          type: number
+        category:
+          description: Categoría a la que pertenece el producto
+          type: string
+        thumbnails:
+          description: Dirección url de la foto del producto
+          type: string
+        owner:
+          decription: correo del usuario que creó el articulo
+          type: string
+        __v:
+          description: version del documento
+          type: number
+        quantity:
+          type: number
+          description: cantidad de productos
+      example:
+        title: Sony camera
+        description: Professional mirrorless camera
+        price: 3799
+        thumnails: https://www.sony.cl/image/a09b5c65a4a30b0a4d666c155803028c?fmt=pjpeg&wid=1200&hei=470&bgcolor=F1F5F9&bgc=F1F5F9
+        code: 59
+        stock: 2
+        category: cameras
+        status: true
+        owner: correo@gmail.com
+        __v: 0
+        quantity: 3
     ProductUpdate:
       type: object
       properties:
@@ -69,28 +165,22 @@ components:
     create:
       type: object
       properties:
-        status: indicador del estado de la respuesta
-        message: mensaje indicando que el producto fue creado
-        response: objeto con el _id del producto creado
+        status:
+          type: string
+          description: indicador del estado de la respuesta
+        message:
+          type: string
+          description: mensaje indicando que el producto fue creado
+        response:
+          type: object
+          description: objeto con el _id del producto creado
       example:
         status: success
         message: product created
         response:
           product_id: 65442864681055539c11067f
     read:
-      type: object
-      properties:
-        _id: ObjectID del producto
-        title: Nombre del producto
-        description: descripcion del producto
-        code: numero sku del producto
-        price: precio del producto en dolares
-        status: indicador de si el producto esta activo o no
-        stock: articulos en stock
-        category: categoria del producto
-        thumbnails: url de la foto del producto
-        owner: usuario que creó el producto
-        __v: version del documento
+      $ref: "#components/schemas/ProductRead"
       example:
         _id: 65442864681055539c11067f
         title: Table,
@@ -106,16 +196,38 @@ components:
     readAll:
       type: object
       properties:
-        status: indicador del estado de la respuesta
-        payload: devuelve los documentos "producto" de la base de datos
-        totalPages: numero total de paginas de la paginacion
-        prevPage: numero de la pagina anterior
+        status:
+          type: string
+          description: Indicador del estado de la respuesta
+        payload:
+          type: array
+          description: Devuelve un array con los documentos "producto" de la base de datos
+          items:
+            $ref: '#components/schemas/ProductRead'
+        totalPages:
+          type: string
+          description: Número total de páginas de la paginación
+        prevPage:
+          type: string
+          description: Número de la página anterior
         nextPage:
+          type: string
+          description: Número de la página siguiente
         page:
+          type: string
+          description: Número de la página actual
         hasPrevPage:
+          type: string
+          description: Indicador de si hay una página anterior
         hasNextPage:
+          type: string
+          description: Indicador de si hay una página siguiente
         nextLink:
+          type: string
+          description: Enlace a la siguiente página
         prevLink:
+          type: string
+          description: Enlace a la página anterior
       example:
         status: success
         totalPages: 10
@@ -245,7 +357,7 @@ paths:
               $ref: "#components/schemas/Product"
       responses:
         "201":
-          description: Éxito en la carga de un producto
+          description: Éxito en la creacion de un producto
           content:
             application/json:
               schema:
@@ -306,7 +418,7 @@ paths:
                 $ref: "#components/responses/fatal"
   /api/products/{pid}:
     get:
-      summary: Leer un producto
+      summary: Leer un producto usando como parametro PID (id del producto)
       tags:
         - Product
       parameters:
@@ -336,7 +448,7 @@ paths:
               schema:
                 $ref: "#components/responses/fatal"
     put:
-      summary: Editar un producto
+      summary: Editar un producto usando como parametro PID (id del producto)
       tags:
         - Product
       security:
@@ -386,7 +498,7 @@ paths:
               schema:
                 $ref: "#components/responses/fatal"
     delete:
-      summary: Eliminar un producto
+      summary: Eliminar un producto usando como parametro PID (id del producto)
       tags:
         - Product
       security:

@@ -1,0 +1,247 @@
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        products:
+          description: Array con los productos
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                description: ObjectId del producto
+                type: string
+              quantity:
+                description: Cantidad del producto
+                type: number
+      example:
+        products:
+          - product: 65442864681055539c11067f
+            quantity: 2
+          - product: 65442864681055539c110681
+            quantity: 3
+  responses:
+    createCart:
+      type: object
+      properties:
+        cid:
+          type: sting
+          description: ID del carrito creado
+        message:
+          type: string
+          description: Mensaje de confirmacion
+        success:
+          type: sting
+          description: true para exitoso y false para no exitoso
+      example:
+        cid: 654e5244af8d616fb442ed08
+        message: cart created with id 654e5244af8d616fb442ed08
+        success: true
+    readCart:
+      type: object
+      properties:
+        cart:
+          type: object
+          description: objeto con el carrito
+          properties:
+            _id:
+              type: string
+              description: object id del carrito
+            total:
+              type: number
+              description: Monto total en USD del carrito
+            date:
+              type: date
+              description: fecha de creación del carrito
+            sortedProducts:
+              type: array
+              description: array con los productos del carrito
+              items:
+                $ref: "#components/schemas/ProductQty"
+                quantity:
+                  type: number
+                  description: cantidad de articulos 
+      example:
+        cart:
+          _id: 654e78e361ca417e5244e806
+          total: 6140
+          date: 2023_11-10T18:57:25.484Z
+          sortedProducts:
+          - _id: 65442864681055539c11067f
+            title: Table,
+            description: Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles,
+            code: 924,
+            price: 520,
+            status: true,
+            stock: 131,
+            category: Clothing,
+            thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+            owner: admin,
+            __v: 0
+            quantity: 2
+          - _id: 65442864681055539c110681
+            title: Table,
+            description: New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016
+            code: 345,
+            price: 550,
+            status: true,
+            stock: 151,
+            category: Clothing,
+            thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+            owner: admin,
+            __v: 0
+            quantity: 3
+          - _id: 65442864681055539c110685
+            title: Table,
+            description: The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality
+            code: 5656,
+            price: 5255,
+            status: true,
+            stock: 5,
+            category: Clothing,
+            thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+            owner: admin,
+            __v: 0
+            quantity: 4
+    auth:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/auth
+        message: unauthenticated
+    forbidden:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/auth
+        message: Unauthorized
+    notFound:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/auth
+        message: Producto/carrito no encontrado
+    fatal:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/auth
+        message: Internal server error
+    securitySchemes:
+      cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+paths:
+  /api/carts:
+    post:
+      summary: Crear un nuevo carrito
+      tags:
+        - Cart
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/Cart'
+      responses:
+        "201":
+          description: Éxito en la creacion de un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/createCart"
+        "401":
+          description: Usuario no autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/auth"
+        "500":
+          description: Falla del servidor al crear un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"
+  /api/carts/{cid}:
+    get:
+      summary: Leer un carrito usando como param el CID (id del carrito)
+      tags:
+       - Cart
+      parameters:
+       - name: cid
+         in: path
+         required: true
+         description: ObjectId del Carrito a leer
+         schema:
+           $type: string
+      responses:
+        "200":
+          description: Éxito en la lectura de un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/readCart"
+        "401":
+          description: Usuario no autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/auth"
+        "404":
+          description: Documento/s no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/notFound"
+        "500":
+          description: Falla del servidor al leer un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"
+
+  
