@@ -10,10 +10,7 @@ export default async function (req, res, next) {
       req.user = one.response;
       return next();
     } else {
-      return res.status(400).json({
-        message: "invalid credentials",
-        response: null,
-      });
+      return res.sendInvalidCredentials();
     }
   } catch (error) {
     return next(error);

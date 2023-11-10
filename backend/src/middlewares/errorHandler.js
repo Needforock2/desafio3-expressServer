@@ -10,18 +10,25 @@ const error_handler = (error, req, res, next) => {
           error.message
         }`
       );
+       return res.status(error.statusCode).json({
+         method: req.method,
+         path: req.url,
+         message: error.message,
+       });
     } else {
       req.logger.FATAL(
         `${req.method} ${req.url} - ${new Date().toLocaleTimeString()} - ${
           error.message
         }`
       );
-    }
-  return res.status(error.statusCode).json({
-    method: req.method,
-    path: req.url,
-    message: error.message,
-  });
+       return res.status(500).json({
+         method: req.method,
+         path: req.url,
+         message: error.message,
+       });
+  }
+
+ 
 };
 
 export default error_handler;

@@ -38,12 +38,14 @@ export default class CartsRouter extends MyRouter {
       try {
         let { cid } = req.params;
         let sortedCart = await cartsController.read(cid);
-        return res.sendSuccess(sortedCart);
+        return res.sendSuccess(sortedCart); //TODO: paginar los productos del carrito ??????
       } catch (error) {
         next(error);
       }
     });
+    
 
+    
     //UPDATE CART WITH a PRODUCT
     this.post(
       "/:cid/products/:pid",

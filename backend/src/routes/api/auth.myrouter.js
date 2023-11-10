@@ -44,6 +44,7 @@ export default class AuthRouter extends MyRouter {
     this.post(
       "/login",
       ["PUBLIC"],
+      is_email_ok,
       is_user,
       is_valid_pass,
       create_token,

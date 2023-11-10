@@ -113,8 +113,7 @@ export default class ProductRouter extends MyRouter {
           return res.sendNotFound();
         }
       } catch (error) {
-        res.sendNotFound();
-        next(error);
+        return next(error);
       }
     });
 
@@ -138,7 +137,7 @@ export default class ProductRouter extends MyRouter {
           return res.sendNotFound();
         }
       } catch (error) {       
-        next(error)
+        return next(error)
       }
     });
 
@@ -156,7 +155,7 @@ export default class ProductRouter extends MyRouter {
           return res.sendNotFound();
         }
       } catch (error) {
-        next(error);
+       return next(error);
       }
     });
   }
