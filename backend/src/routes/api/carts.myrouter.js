@@ -7,6 +7,7 @@ import config from "../../config/env.js";
 import is_valid_product_id from "../../middlewares/is_valid_product_id.js";
 import is_user_premium from "../../middlewares/is_user_premium.js";
 import is_valid_cart_id from "../../middlewares/is_valid_cart_id.js";
+import read_cart_Id from "../../middlewares/read_cart_Id.js";
 
 const cartsController = new CartsController();
 const userController = new AuthController();
@@ -34,29 +35,35 @@ export default class CartsRouter extends MyRouter {
       }
     });
     //READ CART
-    this.read("/:cid", ["USER", "ADMIN", "PREMIUM"], async (req, res, next) => {
+    this.read("/", ["USER", "ADMIN", "PREMIUM"], async (req, res, next) => {
       try {
-        let { cid } = req.params;
-        let sortedCart = await cartsController.read(cid);
-        return res.sendSuccess(sortedCart); //TODO: paginar los productos del carrito ??????
+        let cid = req.user.cart;
+        if (cid) {
+          let sortedCart = await cartsController.read(cid);
+          return res.sendSuccess(sortedCart); //TODO: paginar los productos del carrito ??????
+        } else {
+          return res.sendNotFound();
+        }
       } catch (error) {
         next(error);
       }
     });
-    
 
-    
     //UPDATE CART WITH a PRODUCT
-    this.post(
-      "/:cid/products/:pid",
-      ["USER", "ADMIN","PREMIUM"],
+    this.put(
+      "/:pid",
+      ["USER", "ADMIN", "PREMIUM"],
       is_valid_product_id,
-      is_valid_cart_id,
       is_user_premium,
       async (req, res, next) => {
         try {
-          let response = await cartsController.update(req.params);
-          return res.sendSuccess(response);
+          if (req.user.cart) {
+            req.params.cid = req.user.cart;
+            let response = await cartsController.update(req.params);
+            return res.sendSuccess(response);
+          } else {
+            return res.sendNotFound();
+          }
         } catch (error) {
           next(error);
         }
@@ -64,16 +71,20 @@ export default class CartsRouter extends MyRouter {
     );
 
     //UPDATE THE QUANTITY OF A PRODUCT IN THE CART
-    this.put(
-      "/:cid/products/:pid",
+    this.patch(
+      "/:pid",
       ["USER", "ADMIN", "PREMIUM"],
       is_valid_product_id,
-      is_valid_cart_id,
       async (req, res, next) => {
         try {
-          let { qty } = req.body;
-          let response = await cartsController.updateQty(req.params, qty);
-          return res.sendSuccess(response);
+          if (req.user.cart) {
+            req.params.cid = req.user.cart;
+            let { qty } = req.body;
+            let response = await cartsController.updateQty(req.params, qty);
+            return res.sendSuccess(response);
+          } else {
+            return res.sendNotFound();
+          }
         } catch (error) {
           next(error);
         }
@@ -82,14 +93,18 @@ export default class CartsRouter extends MyRouter {
 
     //DELETE ONE PRODUCT FROM THE CART
     this.delete(
-      "/:cid/products/:pid",
+      "/:pid",
       ["USER", "ADMIN", "PREMIUM"],
       is_valid_product_id,
-      is_valid_cart_id,
       async (req, res, next) => {
         try {
-          let response = await cartsController.delete(req.params);
-          return res.sendSuccess(response);
+          if (req.user.cart) {
+            req.params.cid = req.user.cart;
+            let response = await cartsController.delete(req.params);
+            return res.sendSuccess(response);
+          } else {
+            return res.sendNotFound()
+          }
         } catch (error) {
           next(error);
         }
@@ -97,19 +112,19 @@ export default class CartsRouter extends MyRouter {
     );
 
     //DELETE ALL PRODUCTS FROM THE CART
-    this.delete(
-      "/:cid",
-      ["USER", "ADMIN", "PREMIUM"],
-      is_valid_cart_id,
-      async (req, res, next) => {
-        try {
+    this.delete("/", ["USER", "ADMIN", "PREMIUM"], async (req, res, next) => {
+      try {
+        if (req.user.cart) {
+          req.params.cid = req.user.cart;
           let response = await cartsController.deleteAll(req.params);
           return res.sendSuccess(response);
-        } catch (error) {
-          next(error);
+        } else {
+          return res.sendNotFound()
         }
+      } catch (error) {
+        next(error);
       }
-    );
+    });
 
     //SUM the CART TOTAL
     this.read(

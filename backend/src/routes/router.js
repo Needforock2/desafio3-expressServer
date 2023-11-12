@@ -34,9 +34,10 @@ export default class MyRouter {
       MyError.new(authenticated.message, authenticated.code);
     res.sendNoAuthorizedError = (error) =>
       MyError.new(authorized(error).message, authorized(error).code);
-    res.sendInvalidCredentials = () => MyError.new(credentials.message, credentials.code)
-    res.sendDuplicate = () => MyError.new(duplicate.message, duplicate.code)
-    res.sendExpired = () => MyError.new(expired.message, expired.code)
+    res.sendInvalidCredentials = () =>
+      MyError.new(credentials.message, credentials.code);
+    res.sendDuplicate = () => MyError.new(duplicate.message, duplicate.code);
+    res.sendExpired = () => MyError.new(expired.message, expired.code);
     return next();
   };
   handlePolicies = (policies) => async (req, res, next) => {
@@ -51,7 +52,7 @@ export default class MyRouter {
         } else {
           const payload = jwt.verify(token, process.env.SECRET_TOKEN);
 
-          const user = await User.findOne({ mail: payload.email }, "mail role");
+          const user = await User.findOne({ mail: payload.email }, "mail role cart");
 
           const role = user.role;
           if (
@@ -91,6 +92,15 @@ export default class MyRouter {
   //update
   put(path, policies, ...cbs) {
     this.router.put(
+      path,
+      this.responses,
+      this.handlePolicies(policies),
+      this.applyCb(cbs)
+    );
+  }
+  //patch
+  patch(path, policies, ...cbs) {
+    this.router.patch(
       path,
       this.responses,
       this.handlePolicies(policies),

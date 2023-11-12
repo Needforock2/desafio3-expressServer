@@ -24,7 +24,7 @@ export default function Cart() {
       const cid = sessionStorage.getItem("cid");
       if (cid) {
          setLoadingProducts(true);
-        const url = `http://localhost:8080/api/carts/${cid}`;
+        const url = `http://localhost:8080/api/carts`;
         try {
           const res = await axios.get(url);
           if (res.data.cart) {
@@ -46,8 +46,7 @@ export default function Cart() {
   }, [updated, setIsEmpty]);
 
   const handleDelete = async (pid) => {
-    const cid = sessionStorage.getItem("cid");
-    const url = `http://localhost:8080/api/carts/${cid}/products/${pid}`;
+    const url = `http://localhost:8080/api/carts/${pid}`;
     try {
       await axios.delete(url);
       setUpdated(true);
@@ -60,10 +59,9 @@ export default function Cart() {
     const body = {
       qty,
     };
-    const cid = sessionStorage.getItem("cid");
     try {
-      const url = `http://localhost:8080/api/carts/${cid}/products/${pid}`;
-      await axios.put(url, body);
+      const url = `http://localhost:8080/api/carts/${pid}`;
+      await axios.patch(url, body);
       setUpdated(true);
     } catch (error) {
       console.log(error);

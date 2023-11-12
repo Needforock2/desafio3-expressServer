@@ -21,6 +21,14 @@ components:
             quantity: 2
           - product: 65442864681055539c110681
             quantity: 3
+    Quantity:
+      type: object
+      properties:
+        qty:
+          description: Cantidad total del producto a colocar en el carrito
+          type: number
+      example:
+        qty: 4
   responses:
     createCart:
       type: object
@@ -37,6 +45,30 @@ components:
       example:
         cid: 654e5244af8d616fb442ed08
         message: cart created with id 654e5244af8d616fb442ed08
+        success: true
+    modifyCart:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Mensaje de confirmacion
+        success:
+          type: sting
+          description: true para exitoso y false para no exitoso
+      example:
+        message: cart id 654e5244af8d616fb442ed08 modified
+        success: true
+    clearCart:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Mensaje de confirmacion
+        success:
+          type: sting
+          description: true para exitoso y false para no exitoso
+      example:
+        message: cart id 654e5244af8d616fb442ed08 cleared
         success: true
     readCart:
       type: object
@@ -104,7 +136,7 @@ components:
             owner: admin,
             __v: 0
             quantity: 4
-    auth:
+    authCart:
       type: object
       properties:
         method:
@@ -118,7 +150,7 @@ components:
           description: Descripción del error
       example:
         method: POST
-        path: /api/auth
+        path: /api/carts
         message: unauthenticated
     forbidden:
       type: object
@@ -134,7 +166,7 @@ components:
           description: Descripción del error
       example:
         method: POST
-        path: /api/auth
+        path: /api/carts
         message: Unauthorized
     notFound:
       type: object
@@ -150,7 +182,7 @@ components:
           description: Descripción del error
       example:
         method: POST
-        path: /api/auth
+        path: /api/carts
         message: Producto/carrito no encontrado
     fatal:
       type: object
@@ -166,7 +198,7 @@ components:
           description: Descripción del error
       example:
         method: POST
-        path: /api/auth
+        path: /api/carts
         message: Internal server error
     securitySchemes:
       cookieAuth:
@@ -199,25 +231,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/responses/auth"
+                $ref: "#components/responses/authCart"
         "500":
           description: Falla del servidor al crear un carrito
           content:
             application/json:
               schema:
                 $ref: "#components/responses/fatal"
-  /api/carts/{cid}:
     get:
-      summary: Leer un carrito usando como param el CID (id del carrito)
+      summary: Leer el carrito del usuario loggeado
       tags:
        - Cart
-      parameters:
-       - name: cid
-         in: path
-         required: true
-         description: ObjectId del Carrito a leer
-         schema:
-           $type: string
+      security:
+        - cookieAuth: []
       responses:
         "200":
           description: Éxito en la lectura de un carrito
@@ -230,7 +256,159 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/responses/auth"
+                $ref: "#components/responses/authCart"
+        "404":
+          description: Documento/s no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/notFound"
+        "500":
+          description: Falla del servidor al leer un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"
+    delete:
+      summary: Eliminar todos los productos del carrito del usuario loggeado
+      tags:
+       - Cart
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Éxito en la limpieza de un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/clearCart"
+        "401":
+          description: Usuario no autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/authCart"
+        "404":
+          description: Documento/s no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/notFound"
+        "500":
+          description: Falla del servidor al limpiar un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"
+  /api/carts/{pid}:
+    put:
+      summary: Actualizar un Producto en un carrito usando como param el PID (id del producto)
+      tags:
+       - Cart
+      security:
+        - cookieAuth: []
+      parameters:
+       - name: pid
+         in: path
+         required: true
+         description: ObjectId del Producto a actualizar
+         schema:
+           $type: string
+      responses:
+        "200":
+          description: Éxito en la modificacion de un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/modifyCart"
+        "401":
+          description: Usuario no autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/authCart"
+        "404":
+          description: Documento/s no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/notFound"
+        "500":
+          description: Falla del servidor al leer un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"
+    patch:
+      summary: Actualizar la cantidad de un producto.
+      tags:
+       - Cart
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/Quantity'
+      parameters:
+       - name: pid
+         in: path
+         required: true
+         description: ObjectId del Producto a actualizar
+         schema:
+           $type: string
+      responses:
+        "200":
+          description: Éxito en la modificacion del carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/modifyCart"
+        "401":
+          description: Usuario no autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/authCart"
+        "404":
+          description: Documento/s no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/notFound"
+        "500":
+          description: Falla del servidor al leer un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"
+    delete:
+      summary: Eliminar un Producto en un carrito usando como param el PID (id del producto)
+      tags:
+       - Cart
+      security:
+        - cookieAuth: []
+      parameters:
+       - name: pid
+         in: path
+         required: true
+         description: ObjectId del Producto a actualizar
+         schema:
+           $type: string
+      responses:
+        "200":
+          description: Éxito en la lectura de un carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/modifyCart"
+        "401":
+          description: Usuario no autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/authCart"
         "404":
           description: Documento/s no encontrados
           content:
