@@ -54,6 +54,7 @@ export default class AuthPersistance {
   }
 
   async readOne(mail) {
+    console.log(mail)
     let one = await User.findOne({ mail });
     if (one) {
       return {

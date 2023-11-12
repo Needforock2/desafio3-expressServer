@@ -14,7 +14,6 @@ export default class CartPersistance {
     };
   }
   
-  
   // READ
   async readModel(cid) {
     const cartT = await Cart.find({ _id: cid })
@@ -80,17 +79,19 @@ export default class CartPersistance {
         },
       },
     ]);
-   
      return {
        cart: cart[0]
 
     };
   }
 
+
+
   //Update Cart with product
 
   async updateModel(data) {
     let { cid, pid } = data;
+    console.log(cid)
     const cart = await Cart.findOne({ _id: cid });
     const productObjectId = new ObjectId(pid);
     const productoExistente = cart.products.find(
@@ -153,6 +154,7 @@ export default class CartPersistance {
     };
   }
 
+  
   //DELETE ALL PRODUCTS FROM THE CART
   async deleteAllModel(data) {
     let { cid } = data;

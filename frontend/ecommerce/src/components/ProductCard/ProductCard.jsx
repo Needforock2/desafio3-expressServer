@@ -21,10 +21,8 @@ export default function ProductCard({ producto }) {
         const resp = await axios.post(createUrl);
         sessionStorage.setItem("cid", resp.data.cid);
       }
-       const updateUrl = `http://localhost:8080/api/carts/${sessionStorage.getItem(
-         "cid"
-       )}/products/${pid}`;
-       await axios.post(updateUrl);
+       const updateUrl = `http://localhost:8080/api/carts/${pid}`;
+       await axios.put(updateUrl);
        swal({
          title: "Exito",
          text: "Producto Agregado al Carrito",
