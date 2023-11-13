@@ -8,9 +8,9 @@ import { useNavigate } from "react-router-dom";
 const Profile = () => {
   const { role } = useContext(CartContext);
   const navigate = useNavigate();
-
+  console.log(role)
   useEffect(() => {
-    if (role === 0) {
+    if (role === null) {
       navigate("/");
     }
   }, []);
@@ -23,8 +23,10 @@ const Profile = () => {
     const url2 = "http://localhost:8080/api/sessions/current";
     let user = "";
     try {
-       if (role !=0) {
-      const resp = await axios.get(url2);
+      
+       if (role !=null) {
+         const resp = await axios.get(url2);
+         console.log(resp)
       user = resp.data.user[0];
 
        }
@@ -45,7 +47,7 @@ const Profile = () => {
 
   return (
     <>
-      {role === 0 ? null : !loading ? (
+      {role === null ? null : !loading ? (
         <Box
           maxW="md"
           borderWidth="1px"

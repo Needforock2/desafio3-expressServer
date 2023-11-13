@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken'
 
-export default function create_token(req, res, next){
+export default function create_token(req, res, next) {
+    console.log(req.user.mail)
     let token = jwt.sign(
-        { email: req.body.mail },
+        { email: req.user.mail },
         process.env.SECRET_TOKEN,
         { expiresIn: 60*60*24 }
     )

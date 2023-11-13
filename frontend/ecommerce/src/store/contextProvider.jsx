@@ -5,7 +5,7 @@ import { CartContext } from "./context";
 export const CartContextProvider = ({ children }) => {
     
   const [isEmpty, setIsEmpty] = useState(true)
-  const [role, setRole] =useState(0)
+  const [role, setRole] =useState(null)
 
 
 

@@ -119,7 +119,7 @@ export default class AuthRouter extends MyRouter {
           let token = jwt.sign(
             { email: req.body.mail },
             process.env.SECRET_TOKEN,
-            { expiresIn: 60*60 }
+            { expiresIn: 60 * 60 }
           );
           let maskedToken = token.replace(/\./g, "*");
           let message = `<h2>Sigue el siguiente enlace para reestablecer tu contraseña<h2> </br> <a href='http://localhost:5173/pass_reset/${maskedToken}'>Reestablecer contraseña</a>`;
@@ -156,11 +156,48 @@ export default class AuthRouter extends MyRouter {
         if (response) {
           return res.sendSuccess({
             success: true,
-            message:
-              "Contraseña Cambiada",
-          })
+            message: "Contraseña Cambiada",
+          });
         } else {
-          return res.sendNotFound()
+          return res.sendNotFound();
+        }
+      }
+    );
+
+    //GH register
+    this.read(
+      "/github",
+      ["PUBLIC"],
+      passport.authenticate("github", { scope: ["user:mail"] }),
+      (req, res) => {}
+    );
+
+    //GH LOGIN
+    this.read(
+      "/github/callback",
+      ["PUBLIC"],
+      passport.authenticate("github", {}),
+      create_token,
+      (req, res, next) => {
+        try {
+          req.session.mail = req.user.mail;
+          req.session.role = req.user.role;
+          console.log("correo en GHlogin", req.user.mail)
+          const session = JSON.stringify(req.session);
+          console.log(req.session.token)
+          return res.status(200)
+            .send(
+            `<!DOCTYPE html>
+            <html lang="en">
+            <body>    
+            </body>
+            <script>
+                window.opener.postMessage(${session}, 'http://localhost:5173')
+            </script>
+            </html>`
+          );
+        } catch (error) {
+          next(error);
         }
       }
     );
