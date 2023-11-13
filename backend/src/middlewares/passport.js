@@ -3,7 +3,7 @@ import { Strategy } from "passport-local";
 import GHStrategy from "passport-github2";
 import jwt from "passport-jwt";
 import config from "../config/env.js";
-
+import { hashSync, genSaltSync } from "bcrypt";
 import dao from "../dao/factory.js";
 const { User } = dao;
 
@@ -68,15 +68,23 @@ passport.use(
     },
     async (accesToken, refreshToken, profile, done) => {
       try {
-        const one = await User.findOne({ mail: profile._json.login });
+        const model = new User();
+        const one = await model.readOne(profile._json.login);
+    
         if (one) {
-          done(null, one);
+          done(null, one.response);
         } else {
-          let user = await User.create({
-            name: profile._json.name,
+          let hashed_pass = hashSync(
+            profile._json.url,
+            genSaltSync(10)
+          );
+          let nameSplitted = profile._json.name.split(" ")
+          let user = await model.register({
+            first_name: nameSplitted[0],
+            last_name: nameSplitted[1],
             photo: profile._json.avatar_url,
             mail: profile._json.login,
-            password: profile._json.url,
+            password: hashed_pass,
           });
           return done(null, user);
         }
@@ -122,6 +130,7 @@ passport.use(
     {
       jwtFromRequest: jwt.ExtractJwt.fromExtractors([
         (req) => {
+          
           return req?.cookies["token"]
         },
       ]),
@@ -129,6 +138,7 @@ passport.use(
     },
    
     async (payload, done) => {
+      console.log(payload);
       try {
         const model = new User();
         let one = await model.readCurrent(

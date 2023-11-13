@@ -11,7 +11,7 @@ export default class AuthPersistance {
       return {
         success: true,
         message: "user registered",
-        userId: user._id,
+        _id: user._id,
       };
     } else {
       return {

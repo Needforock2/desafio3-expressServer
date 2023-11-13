@@ -49,7 +49,11 @@ export const Login = ({ successLogin, handleRegister, handleReset }) => {
     );
     window.addEventListener("message", (event) => {
       if (event.data.token) {
-        sessionStorage.setItem("token", event.data.token);
+         const token = event.data.token;
+         const expiracion = new Date();
+         expiracion.setDate(expiracion.getDate() + 1);
+         document.cookie = `token=${token}; expires=${expiracion.toUTCString()}; path=/`;
+
         popup?.close();
         successLogin();
         swal({

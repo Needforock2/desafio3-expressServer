@@ -70,13 +70,14 @@ export const NavBar = () => {
     try {
      
         const resp = await axios.get(url2);
-        user = resp.data.user[0];
+      user = resp.data.user[0];
       setUser(user);
       setRole(user.role)
         user.cart?._id && sessionStorage.setItem("cid", user.cart._id);
         user ? setSession(true) : setSession(false);
      
     } catch (error) {
+      console.log(error)
       swal({
         title: "Error",
         text: error.response.data.message,
@@ -106,6 +107,7 @@ export const NavBar = () => {
       });
       sessionStorage.removeItem("cid");
       sessionStorage.removeItem("session")
+      sessionStorage.removeItem("token");
       setRole(0)
       setSession(false);
       navigate("/");
@@ -142,7 +144,7 @@ export const NavBar = () => {
               <Menu>
                 <MenuButton borderRadius={50}>
                   <Avatar
-                    src={user.photo}
+                    src={user&&user.photo}
                     border="solid black 1px"
                     p={1}
                     h="60px"
