@@ -9,7 +9,8 @@
     "start": "node ./src/app.js -p 8080 --mode prod",
     "dev": "nodemon ./src/app.js -p 8080",
     "fs": "nodemon ./src/app.js -p 8080 --persistance FS",
-    "mock": "nodemon ./src/mock/mock.js --mode dev"
+    "mock": "nodemon ./src/mock/mock.js --mode dev",
+    "supertest": "mocha ./test/supertest"
   },
   "keywords": [],
   "author": "",
@@ -44,6 +45,9 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.1.0"
+    "@faker-js/faker": "^8.1.0",
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3"
   }
 }
