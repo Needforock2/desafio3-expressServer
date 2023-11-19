@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Profile = () => {
   const { role } = useContext(CartContext);
   const navigate = useNavigate();
-  console.log(role)
+
   useEffect(() => {
     if (role === null) {
       navigate("/");
@@ -26,7 +26,7 @@ const Profile = () => {
       
        if (role !=null) {
          const resp = await axios.get(url2);
-         console.log(resp)
+
       user = resp.data.user[0];
 
        }

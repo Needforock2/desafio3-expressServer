@@ -4,8 +4,7 @@ import React, { useState, useEffect } from "react";
 export default function Pagination({ pagination, handleNextPrevPage, handleRandomClick }) {
   const { pages, nextlink, nextpage, prevlink, prevpage, page } = pagination;
   const [selectedPage, setSelectedPage] = useState(page)
-  console.log(nextlink)
-  console.log(prevlink)
+
     useEffect(() => {
       setSelectedPage(page)
     }, [page])

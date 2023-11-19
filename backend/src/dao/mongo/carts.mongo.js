@@ -257,7 +257,6 @@ export default class CartPersistance {
 
       { $merge: { into: "tickets" } },
     ]);
-
     const resp = await Cart.find({ _id: cid });
     const cart = await Cart.deleteOne({ _id: cid });
     

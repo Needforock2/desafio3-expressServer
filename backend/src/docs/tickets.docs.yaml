@@ -1,0 +1,227 @@
+components:
+  schemas:
+    Ticket:
+      type: object
+      properties:
+        paymentDate:
+          type: date
+          description: Fecha del pago
+        total:
+          type: number
+          description: valor total de la compra
+        user:
+          type: object
+          properties:
+            id:
+              type: objectId
+              description: id del usuario
+            first_name:
+              type: string
+              description: nombre del usuario
+            last_name:
+              type: string
+              description: apellido del usuario
+            mail:
+              type: string
+              description: email del usuario
+        sortedProducts:
+          type: array
+          properties:
+            title:
+              description: Nombre del producto
+              type: string
+            description:
+              description: Descripcion del producto
+              type: string
+            code:
+              description: Codigo sku del producto
+              type: number
+            price:
+              description: Precio del producto
+              type: number
+            status:
+              description: Indicador de si el producto esta activo (true) o inactivo (false)
+              type: boolean
+            stock:
+              description: Número de articulos disponibles para la venta
+              type: number
+            category:
+              description: Categoría a la que pertenece el producto
+              type: string
+            thumbnails:
+              description: Dirección url de la foto del producto
+              type: string
+            owner:
+              decription: correo del usuario que creó el articulo
+              type: string
+            __v:
+              description: version del documento
+              type: number   
+      example:
+        paymentDate: 2023_11-12T15:44:56.913+00:00
+        total: 2220
+        user:
+          id: 6523fd519b06a7f7e7ade6dc
+          first_name: juenito
+          last_name: perez
+          mail: correo@coder.com
+        sortedProducts:
+          - _id: 65442864681055539c11067f
+            title: Table,
+            description: Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles,
+            code: 924,
+            price: 520,
+            status: true,
+            stock: 131,
+            category: Clothing,
+            thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+            owner: admin,
+            __v: 0
+          - _id: 65442864681055539c11067f
+            title: Table,
+            description: Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles,
+            code: 924,
+            price: 520,
+            status: true,
+            stock: 131,
+            category: Clothing,
+            thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+            owner: admin,
+            __v: 0
+  responses:
+    read:
+      $ref: "#components/schemas/Ticket"
+      example:
+        paymentDate: 2023_11-12T15:44:56.913+00:00
+        total: 2220
+        user:
+          id: 6523fd519b06a7f7e7ade6dc
+          first_name: juenito
+          last_name: perez
+          mail: correo@coder.com
+        sortedProducts:
+          - _id: 65442864681055539c11067f
+            title: Table,
+            description: Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles,
+            code: 924,
+            price: 520,
+            status: true,
+            stock: 131,
+            category: Clothing,
+            thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+            owner: admin,
+            __v: 0
+          - _id: 65442864681055539c11067f
+            title: Table,
+            description: Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles,
+            code: 924,
+            price: 520,
+            status: true,
+            stock: 131,
+            category: Clothing,
+            thumbnails: https://loremflickr.com/640/480/computers?lock=1097246777016320,
+            owner: admin,
+            __v: 0
+    auth:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/ticket
+        message: unauthenticated
+    forbidden:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/ticket
+        message: Unauthorized
+    notFound:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/ticket
+        message: ticket no encontrado
+    fatal:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Metodo HTTP de la solicitud
+        path:
+          type: string
+          description: Descripción del endpoint del error
+        message:
+          type: string
+          description: Descripción del error
+      example:
+        method: POST
+        path: /api/ticket
+        message: Internal server error
+    securitySchemes:
+      cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+paths:
+  /api/ticket/{tid}:
+    get:
+      summary: Leer un ticket de compra
+      tags:
+        - Ticket
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: tid
+          in: path
+          required: true
+          description: ObjectId del ticket a leer
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Éxito en la lectura de un ticket
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/read"
+        "404":
+          description: Documento/s no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/notFound"
+        "500":
+          description: Falla del servidor al editar un ticket
+          content:
+            application/json:
+              schema:
+                $ref: "#components/responses/fatal"

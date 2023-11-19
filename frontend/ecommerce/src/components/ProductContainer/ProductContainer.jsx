@@ -40,7 +40,6 @@ const [searchString, setSearchString] = useState("")
   const handleNextPrevPage = async (data) => {
     try {
       const query = data + `&title=${searchString}`
-      console.log(query)
       const resp = await axios.get(query);
       setProducts(resp.data.payload);
       setPagination({
@@ -62,7 +61,6 @@ const [searchString, setSearchString] = useState("")
    
     const url = `http://localhost:8080/api/products?limit=6&page=${data}&title=${searchString}`;
     try {
-      console.log(url)
       const resp = await axios.get(url);
       setProducts(resp.data.payload);
       setPagination({

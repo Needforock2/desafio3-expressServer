@@ -23,7 +23,8 @@ switch (args.persistance) {
     const { default: ProductMongo } = await import("./mongo/products.mongo.js");
     const { default: UserMongo } = await import("./mongo/auth.mongo.js")
     const { default: CartMongo } = await import("./mongo/carts.mongo.js");
-    dao = {Product: ProductMongo, User: UserMongo, Cart: CartMongo}
+    const { default: TicketMongo} = await import("./mongo/ticket.mongo.js")
+    dao = {Product: ProductMongo, User: UserMongo, Cart: CartMongo, Ticket: TicketMongo}
     break
 }
 
