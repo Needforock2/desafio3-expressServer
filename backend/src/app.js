@@ -62,8 +62,8 @@ app.use(passport.session());
 app.use(winston);
 //documentacion --->
 const specs = swaggerJSDoc(swaggerOptions);
-
 app.use("/api/docs", serve, setup(specs));
+
 //<---- documentacion
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))

@@ -138,7 +138,6 @@ passport.use(
     },
    
     async (payload, done) => {
-      console.log(payload);
       try {
         const model = new User();
         let one = await model.readCurrent(

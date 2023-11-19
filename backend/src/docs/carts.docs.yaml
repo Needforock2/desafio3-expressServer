@@ -34,7 +34,7 @@ components:
       type: object
       properties:
         cid:
-          type: sting
+          type: string
           description: ID del carrito creado
         message:
           type: string

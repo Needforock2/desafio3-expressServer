@@ -123,6 +123,14 @@ describe("Testeando Ecommerce", () => {
       const { _body } = response;
       expect(_body.message).to.be.equals(`cart id: ${cartId} modified`);
     });
+    it("Debe leer un ticket", async () => {
+      let tid = "6542e7f215601fccaf1e2f22"
+      const response = await requester
+        .get("/ticket/" + tid)
+        .set("Cookie", [cookie.name + "=" + cookie.value]);
+      const { _body } = response
+      expect(_body._id).to.be.equals(tid)
+    })
     it("Debe Cerrar Sesión de usuario", async () => {
       const response = await requester
         .post("/auth/logout")

@@ -38,14 +38,12 @@ export default class AuthPersistance {
     switch (one.role) {
       case 0:
         let resp = await User.findByIdAndUpdate(id, { role: 2 });
-        console.log(resp)
         return {
           success: true,
           message: `user ID: ${id} has been upgraded to PREMIUM`,
         };
       case 2:
         let resp2= await User.findByIdAndUpdate(id, { role: 0 })
-        console.log(resp2);
         return {
           success: true,
           message: `user ID: ${id} has been degraded to USER`,
@@ -54,7 +52,6 @@ export default class AuthPersistance {
   }
 
   async readOne(mail) {
-    console.log(mail)
     let one = await User.findOne({ mail });
     if (one) {
       return {
