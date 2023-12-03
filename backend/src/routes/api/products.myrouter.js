@@ -1,7 +1,9 @@
 import MyRouter from "../router.js";
 import ProductsController from "../../controllers/products.controller.js";
 import args from "../../config/arguments.js"; //necesito saber la persistencia
+import { faker } from "@faker-js/faker";
 const productsController = new ProductsController();
+
 
 export default class ProductRouter extends MyRouter {
   init() {
@@ -10,6 +12,9 @@ export default class ProductRouter extends MyRouter {
       try {
 
         let data = req.body;
+        if (!data.code) {
+          data.code = faker.number.int({ min: 1000, max: 100000 });
+        }
         if (req.user.role === 2) {
           data.owner = req.user.mail;
         }        
