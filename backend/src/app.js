@@ -18,8 +18,11 @@ import winston from "./middlewares/winston.js";
 import not_found_handler from "./middlewares/not_found_handler.js";
 import swaggerOptions from "./config/swagger.js";
 import swaggerJSDoc from "swagger-jsdoc"
-import {serve, setup} from "swagger-ui-express"
+import { serve, setup } from "swagger-ui-express"
+import cluster from "cluster";
+import { cpus } from "os";
 
+const numberOfProcess = cpus().length;
 
 const port = program.p;
 const environment = program.mode;
@@ -63,7 +66,6 @@ app.use(winston);
 //documentacion --->
 const specs = swaggerJSDoc(swaggerOptions);
 app.use("/api/docs", serve, setup(specs));
-
 //<---- documentacion
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
@@ -71,6 +73,27 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(`${__dirname}/public`));
 app.use("/", router);
 
+
+//! INICIO tests de estress
+//operacion simple
+app.get("/simple", (req, res) => {
+  let counter = 0;
+  for (let i = 1; i <= 100; i++) {
+    counter = counter + i;
+  }
+  return res.status(200).json({ counter });
+});
+//operacion compleja
+app.get("/complex", (req, res) => {
+  let counter = 0;
+  for (let i = 1; i <= 1000000000; i++) {
+    counter = counter + i;
+  }
+  return res.status(200).json({ counter });
+});
+
+
+//!  FIN tests de estress
 
 
 app.engine("handlebars", handlebars.engine());
@@ -91,7 +114,17 @@ app.use("/api/sessions", sessions_router);
 app.use("/api/auth", auth_router); */
 app.use(error_handler);
 app.use(not_found_handler);
-const server = app.listen(PORT, ready);
+let server=null
+if (cluster.isPrimary) {
+  console.log("primary")
+  for (let i=1; i <= numberOfProcess / 2; i++) {
+    cluster.fork()
+  }
+} else {
+  console.log("worker", process.pid);
+  server = app.listen(PORT, ready);
+}
+
 
 export const io = new Server(server);
 const fetchCart = async (cid) => {

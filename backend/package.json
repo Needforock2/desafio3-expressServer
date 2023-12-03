@@ -10,7 +10,11 @@
     "dev": "nodemon ./src/app.js -p 8080",
     "fs": "nodemon ./src/app.js -p 8080 --persistance FS",
     "mock": "nodemon ./src/mock/mock.js --mode dev",
-    "supertest": "mocha ./test/supertest"
+    "supertest": "mocha ./test/supertest",
+    "simple": "artillery quick --count 50 --num 20 'http://localhost:8080/simple' -o ./test/simple.json",
+    "complex": "artillery quick --count 50 --num 20 'http://localhost:8080/complex' -o ./test/complex.json",
+    "performance": "artillery run ./test/config.yaml -o ./test/crd.json",
+    "report": "artillery report ./test/crd.json"
   },
   "keywords": [],
   "author": "",

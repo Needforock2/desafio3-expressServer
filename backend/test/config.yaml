@@ -1,0 +1,46 @@
+config:
+  target: http://localhost:8080/api
+  phases:
+    - duration: 30
+      arrivalRate: 10
+scenarios:
+  - name: create, read & destroy one product
+    flow:
+      - log: "Login with user credentials"
+      - post:
+          url: /auth/login
+          json:
+            mail: "danielmachado86@yahoo.com"
+            password: "hola1234"
+          capture:
+            - json: "$.session.token"
+              as: "authToken"
+      - log: create one product
+      - post:
+          url: /products
+          json:
+            title: "articulo premium"
+            description: "Professional mirrorless camera"
+            price: 3799
+            thumbnails: "www.canon.com/eosr5.jpg"
+            stock: 2
+            category: "cameras"
+            status: true	
+          headers:
+            Cookie: "token={{authToken}}"
+          capture:
+            - json: "$.response.product_id"
+              as: "pid"
+      - log: read one product
+      - get:
+          url: /products/{{pid}}
+      - log: destroy one product
+      - delete:
+          url: /products/{{pid}}
+          headers:
+            Cookie: "token={{authToken}}"
+      - log: logout
+      - post: 
+          url: /auth/logout
+          headers:
+            Cookie: "token={{authToken}}"
