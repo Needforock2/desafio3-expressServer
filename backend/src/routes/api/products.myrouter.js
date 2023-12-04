@@ -26,8 +26,9 @@ export default class ProductRouter extends MyRouter {
     });
 
     //READ
-    this.read("/", ["PUBLIC"], async (req, res, next) => {
-      const { limit, page, query, title, sort } = req.query;
+    this.read("/", ["PUBLIC","PREMIUM", "ADMIN", ], async (req, res, next) => {
+     
+      const { limit, page, query, title, sort, edit } = req.query;
       const options = {
         limit: limit ? limit : 6,
         page: page ? page : 1,
@@ -53,54 +54,57 @@ export default class ProductRouter extends MyRouter {
       if (title) {
         queryObject["title"] = { $regex: title, $options: "i" };
       }
+    
+      if (edit && req.session.role ===2) { 
+        queryObject["owner"] = req.session.mail;
+      }
 
       try {
         if (args.persistance === "FS") {
           const productsFS = await productsController.readController();
-           return res.sendSuccess({
-             status: "sucess",
-             payload: productsFS,
-           });
+          return res.sendSuccess({
+            status: "sucess",
+            payload: productsFS,
+          });
         } else {
-         const  products = await productsController.readController(
-            query || title ? queryObject : {},
+          const products = await productsController.readController(
+            query || title || edit ? queryObject : {},
             options
           );
-           const {
-             docs,
-             limit,
-             totalPages,
-             page,
-             hasPrevPage,
-             hasNextPage,
-             prevPage,
-             nextPage,
-           } = products;
-           let nextLink = hasNextPage
-             ? `http://localhost:8080/api/products?limit=${limit}&page=${nextPage}${
-                 sort ? `&sort=${sort}` : ""
-               }${query ? `&query=${queryType}=${queryValue}` : ""}`
-             : null;
-           let prevLink = hasPrevPage
-             ? `http://localhost:8080/api/products?limit=${limit}&page=${prevPage}${
-                 sort ? `&sort=${sort}` : ""
-               }${query ? `&query=${queryType}=${queryValue}` : ""}`
-             : null;
+          const {
+            docs,
+            limit,
+            totalPages,
+            page,
+            hasPrevPage,
+            hasNextPage,
+            prevPage,
+            nextPage,
+          } = products;
+          let nextLink = hasNextPage
+            ? `http://localhost:8080/api/products?limit=${limit}&page=${nextPage}${
+                sort ? `&sort=${sort}` : ""
+              }${query ? `&query=${queryType}=${queryValue}` : ""}`
+            : null;
+          let prevLink = hasPrevPage
+            ? `http://localhost:8080/api/products?limit=${limit}&page=${prevPage}${
+                sort ? `&sort=${sort}` : ""
+              }${query ? `&query=${queryType}=${queryValue}` : ""}`
+            : null;
 
-           return res.sendSuccess({
-             status: "success",
-             payload: docs,
-             totalPages,
-             prevPage,
-             nextPage,
-             page,
-             hasPrevPage,
-             hasNextPage,
-             nextLink,
-             prevLink,
-           });
+          return res.sendSuccess({
+            status: "success",
+            payload: docs,
+            totalPages,
+            prevPage,
+            nextPage,
+            page,
+            hasPrevPage,
+            hasNextPage,
+            nextLink,
+            prevLink,
+          });
         }
-       
       } catch (error) {
         next(error);
       }
@@ -127,6 +131,7 @@ export default class ProductRouter extends MyRouter {
       let { pid } = req.params;
       try {
         let data = req.body;
+     
         let owner = req.user
         let response = await productsController.updateController(pid, data, owner);
         if (response) {

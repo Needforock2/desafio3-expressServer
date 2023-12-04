@@ -9,6 +9,7 @@ import Profile from "./components/Profile/Profile";
 import { CartContextProvider } from "./store/contextProvider";
 import PassReset from "./components/Pass_Reset/PassReset";
 import { PassResetReq } from "./components/Pass_Reset/PassResetReq";
+import ProductContainer from "./components/ProductContainer/ProductContainer";
 
 
 
@@ -23,9 +24,11 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/detail/:pid" element={<ProductDetail />} />
           <Route path="/new_product" element={<NewProduct />} />
+          <Route path="/user_products" element={<ProductContainer edit={true} />} />
+          <Route path='/edit_product/:pid' element={<NewProduct />}/>
           <Route path="/profile" element={<Profile />} />
-          <Route path="/pass_reset/:token" element={<PassReset  />} />
-          <Route path="/pass_reset" element={<PassResetReq flag={true}/>} />
+          <Route path="/pass_reset/:token" element={<PassReset />} />
+          <Route path="/pass_reset" element={<PassResetReq flag={true} />} />
         </Routes>
       </CartContextProvider>
     </BrowserRouter>

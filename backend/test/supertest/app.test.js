@@ -8,25 +8,25 @@ describe("Testeando Ecommerce", () => {
     let idToUse = null;
     let cookie = null;
     let cartId = null;
-    /*   it("Debe crear un usuario Premium", async () => {
+    it("Debe crear un usuario Basico", async () => {
       let user = {
-        first_name: "usuario premium",
-        last_name: "apellido premium",
-        mail: "usuario@premium.com",
-        role: 2,
+        first_name: "usuario",
+        last_name: "apellido",
+        mail: "usuario@cachupines.com",
+        role: 0,
         password: "hola1234",
       };
       const response = await requester.post("/auth/register").send(user);
       const { _body } = response;
       expect(_body.message).to.be.equals("user registered");
-    }); */
-    it("Debe iniciar sesion un usuario Premium", async () => {
+    });
+    it("Debe iniciar sesion un usuario Basico", async () => {
       let data = {
-        mail: "usuario@premium.com",
+        mail: "usuario@cachupines.com",
         password: "hola1234",
       };
       const response = await requester.post("/auth/login").send(data);
-      const { headers} = response;
+      const { headers } = response;
       cookie = headers["set-cookie"][0];
       cookie = {
         name: cookie.split("=")[0],
@@ -35,7 +35,12 @@ describe("Testeando Ecommerce", () => {
       expect(cookie.name).to.be.equals("token");
       expect(cookie.value).to.be.ok;
     });
-    it("Debe crear un producto", async () => {
+    it("Debe hacer upgrade de USUARIO a PREMIUM", async () => {
+      const response = await requester.put("/auth/premium").set("Cookie", [cookie.name + "=" + cookie.value]);
+      const { _body } = response;
+      expect(_body.success).to.be.equals(true);
+    });
+    it("Ahora como usuario premium Debe crear un producto", async () => {
       let data = {
         title: "articulo premium",
         description: "Professional mirrorless camera",
@@ -60,7 +65,7 @@ describe("Testeando Ecommerce", () => {
       const { _body } = response;
       expect(Array.isArray(_body.payload)).to.be.equals(true);
     });
-    it("Debe Editar un producto", async () => {
+    it("Como usuario premium Debe Editar un producto", async () => {
       let data = {
         title: "articulo premium editado",
         status: false,
@@ -72,7 +77,7 @@ describe("Testeando Ecommerce", () => {
       const { _body } = response;
       expect(_body.message).to.be.equals(`product id: ${idToUse} modified`);
     });
-    it("Debe Eliminar un producto", async () => {
+    it("Como usuario premium Debe Eliminar un producto", async () => {
       const response = await requester
         .delete("/products/" + idToUse)
         .set("Cookie", [cookie.name + "=" + cookie.value]);
@@ -83,11 +88,11 @@ describe("Testeando Ecommerce", () => {
       let cart = {
         products: [
           {
-            product: "65442864681055539c11067f",
+            product: "656d23555b977e21ef50f6d1",
             quantity: 2,
           },
           {
-            product: "65442864681055539c110681",
+            product: "656d23565b977e21ef50f6d3",
             quantity: 3,
           },
         ],
@@ -108,7 +113,7 @@ describe("Testeando Ecommerce", () => {
       expect(Array.isArray(_body.cart.sortedProducts)).to.be.equals(true);
     });
     it("Debe actualizar un producto en el carrito", async () => {
-      let pid = "65442885681055539c110693";
+      let pid = "656d23565b977e21ef50f6d7";
       const response = await requester
         .put("/carts/" + pid)
         .set("Cookie", [cookie.name + "=" + cookie.value]);
@@ -116,7 +121,7 @@ describe("Testeando Ecommerce", () => {
       expect(_body.message).to.be.equals(`cart id: ${cartId} modified`);
     });
     it("Debe eliminar un producto en el carrito", async () => {
-      let pid = "65442885681055539c110693";
+      let pid = "656d23565b977e21ef50f6d7";
       const response = await requester
         .delete("/carts/" + pid)
         .set("Cookie", [cookie.name + "=" + cookie.value]);
@@ -124,13 +129,13 @@ describe("Testeando Ecommerce", () => {
       expect(_body.message).to.be.equals(`cart id: ${cartId} modified`);
     });
     it("Debe leer un ticket", async () => {
-      let tid = "6542e7f215601fccaf1e2f22"
+      let tid = "6542e7f215601fccaf1e2f22";
       const response = await requester
         .get("/ticket/" + tid)
         .set("Cookie", [cookie.name + "=" + cookie.value]);
-      const { _body } = response
-      expect(_body._id).to.be.equals(tid)
-    })
+      const { _body } = response;
+      expect(_body._id).to.be.equals(tid);
+    });
     it("Debe Cerrar Sesión de usuario", async () => {
       const response = await requester
         .post("/auth/logout")

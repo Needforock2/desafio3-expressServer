@@ -43,7 +43,7 @@ export default class AuthPersistance {
           message: `user ID: ${id} has been upgraded to PREMIUM`,
         };
       case 2:
-        let resp2= await User.findByIdAndUpdate(id, { role: 0 })
+        let resp2 = await User.findByIdAndUpdate(id, { role: 0 })        
         return {
           success: true,
           message: `user ID: ${id} has been degraded to USER`,
