@@ -8,17 +8,27 @@ import SearchBar from "../SearchBar/SearchBar";
 import NoSearchResults from "../NoSearchResults/NoSearchResults";
 axios.defaults.withCredentials = true;
 
-export default function ProductContainer() {
+export default function ProductContainer({ edit }) {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [pagination, setPagination] = useState({});
-const [searchString, setSearchString] = useState("")
+  const [searchString, setSearchString] = useState("");
+const [deleteP, setDeleteP] = useState(false)
+
+  const handleDeleteP = () => {
+     setDeleteP(!deleteP)
+
+  }
 
   useEffect(() => {
     async function fetchProducts() {
       setLoadingProducts(true);
       try {
-        const resp = await axios.get("http://localhost:8080/api/products");
+        let url = "http://localhost:8080/api/products";
+        if (edit) {
+          url = url + "?edit=true";
+        }
+        const resp = await axios.get(url);
         setProducts(resp.data.payload);
         setPagination({
           page: resp.data.page,
@@ -34,12 +44,14 @@ const [searchString, setSearchString] = useState("")
         console.log(error);
       }
     }
-    fetchProducts();
-  }, []);
+
+      fetchProducts();
+    
+  }, [deleteP]);
 
   const handleNextPrevPage = async (data) => {
     try {
-      const query = data + `&title=${searchString}`
+      const query = data + `&title=${searchString}`;
       const resp = await axios.get(query);
       setProducts(resp.data.payload);
       setPagination({
@@ -58,7 +70,6 @@ const [searchString, setSearchString] = useState("")
   };
 
   const handleRandomClick = async (data) => {
-   
     const url = `http://localhost:8080/api/products?limit=6&page=${data}&title=${searchString}`;
     try {
       const resp = await axios.get(url);
@@ -78,8 +89,8 @@ const [searchString, setSearchString] = useState("")
   };
 
   const handleSearch = async (value) => {
-    setSearchString(value)
-    
+    setSearchString(value);
+
     const url = `http://localhost:8080/api/products?title=${value}`;
     try {
       const resp = await axios.get(url, { withCredentials: true });
@@ -122,7 +133,7 @@ const [searchString, setSearchString] = useState("")
               justifyContent="center"
             >
               {products.map((product) => (
-                <ProductCard key={product.id} producto={product} />
+                <ProductCard key={product.id} producto={product} edit={edit} handleDeleteP={ handleDeleteP} />
               ))}
             </Flex>
           ) : (

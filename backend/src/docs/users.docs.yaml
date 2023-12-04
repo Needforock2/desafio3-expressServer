@@ -107,6 +107,18 @@ components:
       example:
         status: success
         message: Signed out
+    role_change:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Estado de la solicitud
+        message:
+          type: string
+          description: Descripcion de la operación realizada
+      example:
+        success: true
+        message: user ID 654bcecb9a74c5d775fc0b2e has been upgraded/downgraded to PREMIUM/USER
     pass_req:
       type: object
       properties:
@@ -333,6 +345,32 @@ paths:
             application/json:
               schema:
                 $ref: '#components/responses/pass_reset'
+        "401":
+          description: Credenciales Invalidas / token expirado o invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/auth'
+        "500":
+          description: Servidor caído
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/fatal'
+/api/auth/premium:
+    put:
+      summary: Cambiar de rol. Si el rol es USUARIO cambia a PREMIUM y viceversa
+      tags:
+        - Auth
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Éxito en el cambio del rol
+          content:
+            application/json:
+              schema:
+                $ref: '#components/responses/role_change'
         "401":
           description: Credenciales Invalidas / token expirado o invalido
           content:

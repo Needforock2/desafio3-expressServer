@@ -95,10 +95,9 @@ export default class AuthRouter extends MyRouter {
     );
 
     //ROL CHANGING
-    this.put("/premium/:uid", ["USER", "PREMIUM"], async (req, res, next) => {
+    this.put("/premium", ["USER", "PREMIUM"], async (req, res, next) => {
       try {
-        let { uid } = req.params;
-        let response = await authController.changeRole(uid);
+        let response = await authController.changeRole(req.user._id);
         if (response) {
           return res.sendSuccess(response);
         }

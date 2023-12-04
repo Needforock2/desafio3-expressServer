@@ -15,7 +15,7 @@ const userController = new AuthController();
 export default class CartsRouter extends MyRouter {
   init() {
     //create
-    this.post("/", ["USER", "ADMIN", "PREMIUM"], async (req, res, next) => {
+    this.post("/", ["USER", "PREMIUM"], async (req, res, next) => {
       try {
         let data = req.body;
         const mail = req.user.mail;
@@ -52,7 +52,7 @@ export default class CartsRouter extends MyRouter {
     //UPDATE CART WITH a PRODUCT
     this.put(
       "/:pid",
-      ["USER", "ADMIN", "PREMIUM"],
+      ["USER", "PREMIUM"],
       is_valid_product_id,
       is_user_premium,
       async (req, res, next) => {
@@ -73,7 +73,7 @@ export default class CartsRouter extends MyRouter {
     //UPDATE THE QUANTITY OF A PRODUCT IN THE CART
     this.patch(
       "/:pid",
-      ["USER", "ADMIN", "PREMIUM"],
+      ["USER", "PREMIUM"],
       is_valid_product_id,
       async (req, res, next) => {
         try {
@@ -94,7 +94,7 @@ export default class CartsRouter extends MyRouter {
     //DELETE ONE PRODUCT FROM THE CART
     this.delete(
       "/:pid",
-      ["USER", "ADMIN", "PREMIUM"],
+      ["USER", "PREMIUM"],
       is_valid_product_id,
       async (req, res, next) => {
         try {
@@ -112,7 +112,7 @@ export default class CartsRouter extends MyRouter {
     );
 
     //DELETE ALL PRODUCTS FROM THE CART
-    this.delete("/", ["USER", "ADMIN", "PREMIUM"], async (req, res, next) => {
+    this.delete("/", ["USER", "PREMIUM"], async (req, res, next) => {
       try {
         if (req.user.cart) {
           req.params.cid = req.user.cart;
@@ -132,6 +132,7 @@ export default class CartsRouter extends MyRouter {
       ["USER", "ADMIN", "PREMIUM"],
       is_valid_cart_id,
       async (req, res, next) => {
+        
         try {
           let { cid } = req.params;
           let response = await cartsController.sumAll(cid);

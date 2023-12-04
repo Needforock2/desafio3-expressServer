@@ -17,7 +17,8 @@ import {
   MenuItem,
   Button,
   Heading,
-  useTheme, Link
+  useTheme,
+  Link,
 } from "@chakra-ui/react";
 import { Login } from "../Login/Login";
 import { useContext, useEffect, useState } from "react";
@@ -26,58 +27,55 @@ import swal from "sweetalert";
 import { Register } from "../Register/Register";
 import { PassResetReq } from "../Pass_Reset/PassResetReq";
 import { CartContext } from "../../store/context";
- 
 
 axios.defaults.withCredentials = true;
 
 export const NavBar = () => {
   const theme = useTheme();
-   const textColor = theme.colors.custom.text;
-  const {role, setRole} = useContext(CartContext)
+  const textColor = theme.colors.custom.text;
+  const { role, setRole } = useContext(CartContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [session, setSession] = useState(false);
   const [register, setRegister] = useState(false);
-  const [reset, setReset] = useState(false)
+  const [reset, setReset] = useState(false);
   const [user, setUser] = useState({});
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const successLogin = () => {
-    sessionStorage.setItem("session", true)
+    sessionStorage.setItem("session", true);
     setSession(true);
     onClose();
   };
 
   const successReset = () => {
-    onClose()
-    setRegister(false)
-    setReset(false)
-  }
+    onClose();
+    setRegister(false);
+    setReset(false);
+  };
 
   const successRegister = () => {
     onClose();
-  }
+  };
 
   const handleRegister = () => {
     setRegister(!register);
   };
   const handleReset = () => {
-    setReset(!reset)
-  }
+    setReset(!reset);
+  };
 
   const getUser = async () => {
     const url2 = "http://localhost:8080/api/sessions/current";
     let user = "";
     try {
-     
-        const resp = await axios.get(url2);
+      const resp = await axios.get(url2);
       user = resp.data.user[0];
       setUser(user);
-      setRole(user.role)
-        user.cart?._id && sessionStorage.setItem("cid", user.cart._id);
-        user ? setSession(true) : setSession(false);
-     
+      setRole(user.role);
+      user.cart?._id && sessionStorage.setItem("cid", user.cart._id);
+      user ? setSession(true) : setSession(false);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       swal({
         title: "Error",
         text: error.response.data.message,
@@ -86,15 +84,13 @@ export const NavBar = () => {
     }
   };
   useEffect(() => {
-    const localSession = sessionStorage.getItem("session") 
-    if (localSession ) {      
+    const localSession = sessionStorage.getItem("session");
+    if (localSession) {
       getUser();
     }
   }, [session]);
 
-  useEffect(() => {
-
-  }, [register]);
+  useEffect(() => {}, [register]);
 
   const handleLogout = async () => {
     const url = "http://localhost:8080/api/auth/logout";
@@ -106,9 +102,9 @@ export const NavBar = () => {
         icon: "success",
       });
       sessionStorage.removeItem("cid");
-      sessionStorage.removeItem("session")
+      sessionStorage.removeItem("session");
       sessionStorage.removeItem("token");
-      setRole(0)
+      setRole(0);
       setSession(false);
       navigate("/");
     } catch (error) {
@@ -131,20 +127,23 @@ export const NavBar = () => {
           }}
           color={textColor}
           size="6xl"
-          to='/'
+          to="/"
         >
           <Heading fontSize="6xl">CACHUPINES</Heading>
         </NavLink>
         <Flex gap={10} justifyContent="center" alignItems="center">
           <>
             {session && (role === 1 || role === 2) ? (
-              <NavLink to={`/new_product`}>Crear Producto</NavLink>
+              <>
+                <NavLink to={`/new_product`}>Crear Producto</NavLink>
+                <NavLink to={`/user_products`}>Editar Producto</NavLink>
+              </>
             ) : null}
             {session ? (
               <Menu>
                 <MenuButton borderRadius={50}>
                   <Avatar
-                    src={user&&user.photo}
+                    src={user && user.photo}
                     border="solid black 1px"
                     p={1}
                     h="60px"

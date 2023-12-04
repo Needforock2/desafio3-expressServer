@@ -1,6 +1,6 @@
 import { Card, CardBody, Image, Stack, Heading, Text, Divider, CardFooter, ButtonGroup, Button } from '@chakra-ui/react';
 import axios from 'axios';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
 import { CartContext } from '../../store/context';
@@ -8,11 +8,11 @@ import { CartContext } from '../../store/context';
 
 
 
-export default function ProductCard({ producto }) {
+export default function ProductCard({ producto, edit, handleDeleteP }) {
   const { setIsEmpty } = useContext(CartContext);
   const navigate = useNavigate()
   const { title, description, price, stock, category, _id, thumbnails } = producto
-  
+  const [update, setUpdate] = useState(false)
   const handleAddToCart = async (pid) => {
     const createUrl = "http://localhost:8080/api/carts";
     
@@ -41,13 +41,49 @@ export default function ProductCard({ producto }) {
   const handleClick = (pid) => {
     navigate(`/detail/${pid}`)
   }
+
+  const handleEdit = (pid) => {
+    navigate(`/edit_product/${pid}`);
+  }
+
+  const handleDelete = async(pid) => {
+    try {
+      const url = `http://localhost:8080/api/products/${pid}`
+      const resp = await axios.delete(url)
+      if (resp.data.success) {
+
+          swal({
+            title: "Exito",
+            text: "Producto Eliminado",
+            icon: "success",
+          });
+                handleDeleteP();
+      } else {
+          swal({
+            title: "Ooops",
+            text: "Ha habido un error",
+            icon: "error",
+          });
+      }
+    } catch (error) {
+        swal({
+          title: "Ooops",
+          text: `${error.response.data.message}`,
+          icon: "error",
+        });
+    }
+  }
   return (
     <Card maxW="sm" boxShadow="5px 5px 17px 0px rgba(0,0,0,0.75);">
       <CardBody
-        onClick={() => handleClick(_id)}
-        _hover={{
-          cursor: "pointer",
-        }}
+        onClick={edit ? null : () => handleClick(_id)}
+        _hover={
+          edit
+            ? null
+            : {
+                cursor: "pointer",
+              }
+        }
       >
         <Image
           src={thumbnails}
@@ -64,15 +100,34 @@ export default function ProductCard({ producto }) {
       </CardBody>
       <Divider />
       <CardFooter>
-        <ButtonGroup spacing="2">
-          <Button
-            variant="ghost"
-            colorScheme="blue"
-            onClick={() => handleAddToCart(_id)}
-          >
-            Add to cart
-          </Button>
-        </ButtonGroup>
+        {edit ? (
+          <ButtonGroup spacing="2">
+            <Button
+              variant="ghost"
+              colorScheme="blue"
+              onClick={() => handleEdit(_id)}
+            >
+              Editar
+            </Button>
+            <Button
+              variant="ghost"
+              colorScheme="blue"
+              onClick={() => handleDelete(_id)}
+            >
+              Eliminar
+            </Button>
+          </ButtonGroup>
+        ) : (
+          <ButtonGroup spacing="2">
+            <Button
+              variant="ghost"
+              colorScheme="blue"
+              onClick={() => handleAddToCart(_id)}
+            >
+              Agregar al Carrito
+            </Button>
+          </ButtonGroup>
+        )}
       </CardFooter>
     </Card>
   );
