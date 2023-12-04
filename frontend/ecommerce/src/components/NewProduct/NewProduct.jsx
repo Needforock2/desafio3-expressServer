@@ -138,7 +138,7 @@ function NewProduct() {
     <>
       {role === 0 ? null : (
         <Card maxW="50vw" m="20px auto" p={10}>
-          <Heading>{!pid ? "Crear Producto" : "Editar Produto"}</Heading>
+          <Heading>{!pid ? "Crear Producto" : "Editar Producto"}</Heading>
           <form onSubmit={handleCreate}>
             <FormLabel>
               Título:
