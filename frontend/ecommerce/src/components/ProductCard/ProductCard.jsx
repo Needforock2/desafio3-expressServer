@@ -14,14 +14,14 @@ export default function ProductCard({ producto, edit, handleDeleteP }) {
   const { title, description, price, stock, category, _id, thumbnails } = producto
   const [update, setUpdate] = useState(false)
   const handleAddToCart = async (pid) => {
-    const createUrl = "http://localhost:8080/api/carts";
+    const createUrl = `${import.meta.env.VITE_BACKEND_URL}/carts`;
     
     try {
       if (!sessionStorage.getItem('cid')) {
         const resp = await axios.post(createUrl);
         sessionStorage.setItem("cid", resp.data.cid);
       }
-       const updateUrl = `http://localhost:8080/api/carts/${pid}`;
+       const updateUrl = `${import.meta.env.VITE_BACKEND_URL}/carts/${pid}`;
        await axios.put(updateUrl);
        swal({
          title: "Exito",
@@ -48,7 +48,7 @@ export default function ProductCard({ producto, edit, handleDeleteP }) {
 
   const handleDelete = async(pid) => {
     try {
-      const url = `http://localhost:8080/api/products/${pid}`
+      const url = `${import.meta.env.VITE_BACKEND_URL}/products/${pid}`;
       const resp = await axios.delete(url)
       if (resp.data.success) {
 

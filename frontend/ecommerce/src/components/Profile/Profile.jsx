@@ -11,7 +11,7 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const handlePremium = async() => {
-    const url = "http://localhost:8080/api/auth/premium";
+    const url = `${import.meta.env.VITE_BACKEND_URL}/auth/premium`;
     try {
       const resp = await axios.put(url)
       if (resp.data.success) {
@@ -59,7 +59,7 @@ const Profile = () => {
   useEffect(() => {
       const getUser = async () => {
         setLoading(true);
-        const url2 = "http://localhost:8080/api/sessions/current";
+        const url2 = `${import.meta.env.VITE_BACKEND_URL}/sessions/current`;
         let user = "";
         try {
           if (role != null) {

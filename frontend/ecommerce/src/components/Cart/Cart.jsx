@@ -31,7 +31,7 @@ export default function Cart() {
       const cid = sessionStorage.getItem("cid");
       if (cid) {
         setLoadingProducts(true);
-        const url = `http://localhost:8080/api/carts`;
+        const url = `${import.meta.env.VITE_BACKEND_URL}/carts`;
         try {
           const res = await axios.get(url);
           if (res.data.cart) {
@@ -52,7 +52,7 @@ export default function Cart() {
   }, [updated, setIsEmpty]);
 
   const handleDelete = async (pid) => {
-    const url = `http://localhost:8080/api/carts/${pid}`;
+    const url = `${import.meta.env.VITE_BACKEND_URL}/carts/${pid}`;
     try {
       await axios.delete(url);
       setUpdated(true);
@@ -66,7 +66,7 @@ export default function Cart() {
       qty,
     };
     try {
-      const url = `http://localhost:8080/api/carts/${pid}`;
+      const url = `${import.meta.env.VITE_BACKEND_URL}/carts/${pid}`;
       await axios.patch(url, body);
       setUpdated(true);
     } catch (error) {
@@ -100,7 +100,9 @@ export default function Cart() {
   const handleSuccessPayment = async (result) => {
     const cid = sessionStorage.getItem("cid");
     if (result === true) {
-       const url = `http://localhost:8080/api/carts/payment-success/${cid}`;
+       const url = `${
+         import.meta.env.VITE_BACKEND_URL
+       }/carts/payment-success/${cid}`;
       const response = await axios.delete(url);
       if (response.data.success === true) {
         sessionStorage.removeItem("cid");

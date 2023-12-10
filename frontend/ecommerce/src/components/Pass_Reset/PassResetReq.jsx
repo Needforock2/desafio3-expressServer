@@ -27,7 +27,7 @@ export const PassResetReq = ({ successReset, handleReset, flag }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = "http://localhost:8080/api/auth/reset_req";
+    const url = `${import.meta.env.VITE_BACKEND_URL}/auth/reset_req`;
       try {
         setLoading(true)
         const resp = await axios.post(url, loginData);

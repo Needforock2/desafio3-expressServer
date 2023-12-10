@@ -39,7 +39,7 @@ export const Register = ({ successRegister, handleRegister }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = "http://localhost:8080/api/auth/register";
+    const url = `${import.meta.env.VITE_BACKEND_URL}/auth/register`;
     try {
       const resp = await axios.post(url, loginData);
       successRegister()

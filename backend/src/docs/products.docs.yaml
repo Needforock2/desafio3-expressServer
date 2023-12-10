@@ -236,8 +236,8 @@ components:
         page: 3
         hasPrevPage: true
         hasNextPage: true
-        nextLink: http://localhost:8080/api/products?limit=6&page=4&title=table
-        prevLink: http://localhost:8080/api/products?limit=6&page=2&title=table
+        nextLink: https://cachupines-backend.onrender.com/api/products?limit=6&page=4&title=table
+        prevLink: https://cachupines-backend.onrender.com/api/products?limit=6&page=2&title=table
         payload:
           - _id: 65442864681055539c11067f
             title: Table,

@@ -160,7 +160,7 @@ auth_router.get(
             <body>    
             </body>
             <script>
-                window.opener.postMessage(${session}, 'http://localhost:5173')
+                window.opener.postMessage(${session}, ${process.env.FRONT_HOST})
             </script>
             </html>`
       );

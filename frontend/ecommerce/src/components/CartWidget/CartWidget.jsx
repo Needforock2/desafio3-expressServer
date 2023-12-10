@@ -20,7 +20,7 @@ export const CartWidget = () => {
        async function fetchCart() {
          const cid = sessionStorage.getItem("cid");
          if (cid) {
-             const url = `http://localhost:8080/api/carts/${cid}`;
+             const url = `${import.meta.env.VITE_BACKEND_URL}/carts/${cid}`;
              try {
                const cart = await axios.get(url);
                cart.data?.cart.sortedProducts.length > 0 &&  setIsEmpty(false)    
