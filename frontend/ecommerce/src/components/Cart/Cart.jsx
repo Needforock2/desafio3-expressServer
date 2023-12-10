@@ -1,4 +1,4 @@
-import { Flex, Heading, Box, Spinner, Text } from "@chakra-ui/react";
+import { Flex, Heading, Box, Card, Spinner, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import ProductCardCart from "./ProductCardCart";
@@ -6,13 +6,21 @@ import OrderSummary from "./OrderSummary";
 import swal from "sweetalert";
 import { CartContext } from "../../store/context";
 import { useNavigate } from "react-router-dom";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import Wrapper from "../PaymentForm/Wrapper";
+import PaymentForm from "../PaymentForm/PaymentForm";
+import PaymentService from "../../services/paymentService";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
 
 export default function Cart() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [updated, setUpdated] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadingProducts, setLoadingProducts] = useState(false)
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [clientSecret, setClientSecret] = useState(null);
   const [total, setTotal] = useState(0);
   const { setIsEmpty } = useContext(CartContext);
 
@@ -20,17 +28,15 @@ export default function Cart() {
   useEffect(() => {
     setUpdated(false);
     async function fetchCart() {
-     
       const cid = sessionStorage.getItem("cid");
       if (cid) {
-         setLoadingProducts(true);
+        setLoadingProducts(true);
         const url = `http://localhost:8080/api/carts`;
         try {
           const res = await axios.get(url);
           if (res.data.cart) {
             setProducts(res.data.cart?.sortedProducts);
             setTotal(res.data.cart.total);
-            
           } else {
             setProducts([]);
             setTotal(0);
@@ -67,16 +73,38 @@ export default function Cart() {
       console.log(error);
     }
   };
+  const callbackSuccessPaymentIntent = (res) => {
+    console.log("hola")
+    setClientSecret(res.data.payload.client_secret);
+  };
+
+  const callbackErrorPaymentIntent = (err) => {
+    console.log(err);
+  };
 
   const handlePay = async () => {
-    setLoading(true);
-    const cid = sessionStorage.getItem("cid");
+    //setLoading(true);
+    
     try {
-      const url = `http://localhost:8080/api/carts/payment-success/${cid}`;
+      const service = new PaymentService()
+      service.createPaymentIntent({
+        total: total,
+        callbackSuccess: callbackSuccessPaymentIntent,
+        callbackError: callbackErrorPaymentIntent,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSuccessPayment = async (result) => {
+    const cid = sessionStorage.getItem("cid");
+    if (result === true) {
+       const url = `http://localhost:8080/api/carts/payment-success/${cid}`;
       const response = await axios.delete(url);
       if (response.data.success === true) {
         sessionStorage.removeItem("cid");
-        setLoadingProducts(false)
+        setLoadingProducts(false);
         setLoading(false);
         swal({
           title: "Exito",
@@ -92,10 +120,16 @@ export default function Cart() {
           icon: "error",
         });
       }
-    } catch (error) {
-      console.log(error);
+     
+    } else {
+      swal({
+        title: "Ooops!",
+        text: `Algo salió mal`,
+        icon: "error",
+      });
     }
-  };
+    
+  }
 
   return (
     <>
@@ -107,55 +141,73 @@ export default function Cart() {
           flexDirection="column"
           gap="6"
         >
-          <Spinner size="xl" />
-          <Text>Procesando la orden....</Text>
+          
+       
         </Flex>
       ) : (
-          <Box>
-            {!loadingProducts ?
+        <Box>
+          {!loadingProducts ? (
             products.length > 0 ? (
-            <Flex
-              flexDir="row"
-              justifyContent="center"
-              alignItems="start"
-              gap={10}
-              mt={20}
-            >
-              <Flex
-                flexDir="column"
-                justifyContent="center"
-                alignItems="center"
-                gap={2}
-                position="relative"
-              >
-                {products.map((product) => (
-                  <ProductCardCart
-                    handleDelete={handleDelete}
-                    key={product.id}
-                    producto={product}
-                    qty={product.quantity}
-                    handleRefresh={handleRefresh}
-                  />
-                ))}
-              </Flex>
+              <>
+                <Wrapper hidden={clientSecret}>
+                  <Flex
+                    flexDir="row"
+                    justifyContent="center"
+                    alignItems="start"
+                    gap={10}
+                    mt={20}
+                  >
+                    <Flex
+                      flexDir="column"
+                      justifyContent="center"
+                      alignItems="center"
+                      gap={2}
+                      position="relative"
+                    >
+                      {products.map((product) => (
+                        <ProductCardCart
+                          handleDelete={handleDelete}
+                          key={product.id}
+                          producto={product}
+                          qty={product.quantity}
+                          handleRefresh={handleRefresh}
+                        />
+                      ))}
+                    </Flex>
 
-              <OrderSummary total={total} handlePay={handlePay} />
-            </Flex>
+                    <OrderSummary total={total} handlePay={handlePay} />
+                  </Flex>
+                </Wrapper>
+
+                <Wrapper hidden={!clientSecret || !stripePromise}>
+                  <Card maxW="20%" margin="5rem auto" padding="2rem">
+                    <Text mb="2rem">Pago seguro con Stripe</Text>
+                    <Elements
+                      stripe={stripePromise}
+                      options={{ clientSecret: clientSecret }}
+                    >
+                      <PaymentForm
+                        handleSuccessPayment={handleSuccessPayment}                        
+                      />
+                    </Elements>
+                  </Card>
+                </Wrapper>
+              </>
+            ) : (
+              <Heading mt="20%">No hay articulos en el carrito</Heading>
+            )
           ) : (
-            <Heading mt="20%">No hay articulos en el carrito</Heading>
-          )
-           :
-           <Flex
-          minH="90vh"
-          alignItems="center"
-          justifyContent="center"
-          flexDirection="column"
-          gap="6"
-        >
-          <Spinner size="xl" />
-          <Text>Actualizando....</Text>
-        </Flex>}
-          
+            <Flex
+              minH="90vh"
+              alignItems="center"
+              justifyContent="center"
+              flexDirection="column"
+              gap="6"
+            >
+              <Spinner size="xl" />
+              <Text>Actualizando....</Text>
+            </Flex>
+          )}
         </Box>
       )}
     </>

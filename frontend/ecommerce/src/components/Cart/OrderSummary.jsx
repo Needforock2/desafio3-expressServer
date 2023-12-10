@@ -16,7 +16,7 @@ export default function OrderSummary({total, handlePay}) {
           <Text fontSize="2xl">Total: ${total}</Text>
         </Stack>
         <Button mt={10} background={"blue"} color={"white"} onClick={handlePay}>
-          Pagar
+          Checkout
         </Button>
       </CardBody>
     </Card>

@@ -4,6 +4,7 @@ import config from "./env.js";
 
 const port = process.env.PORT || args.port;
 
+console.log({port})
 export default createTransport({
   service: "gmail",
   port,

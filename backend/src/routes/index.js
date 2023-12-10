@@ -10,7 +10,7 @@ import CartsRouter from "./api/carts.myrouter.js";
 import logger from "../config/logger/logger.js";
 import mocking from "../mock/mock.js";
 import TicketRouter from "./api/ticket.myrouter.js";
-
+import paymentRouter from "./api/payments.router.js"
 
 const productsR = new ProductRouter();
 const authR = new AuthRouter();
@@ -19,15 +19,13 @@ const TicketR = new TicketRouter()
 
 const router = Router();
 
-//router.use("/api/auth", auth_router);
-//router.use("/api/carts", cartsRouterDB);
-//router.use("/api/products", productsRouterDB)
-//router.use("/api/cookies", cookies_router);
+
 router.use("/api/sessions", sessions_router);
 router.use("/api/products", productsR.getRouter());
 router.use("/api/auth", authR.getRouter()); //router default de users
 router.use("/api/carts", cartR.getRouter()); //router default de carts
-router.use("/api/ticket", TicketR.getRouter())
+router.use("/api/ticket", TicketR.getRouter());
+router.use("/api/payments", paymentRouter);
 router.use("/api/mockingproducts", (req, res, next) => {
     mocking()
     return res.status(200).json({

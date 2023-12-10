@@ -74,6 +74,7 @@ app.use(express.static(`${__dirname}/public`));
 app.use("/", router);
 
 
+
 //! INICIO tests de estress
 //operacion simple
 app.get("/simple", (req, res) => {
