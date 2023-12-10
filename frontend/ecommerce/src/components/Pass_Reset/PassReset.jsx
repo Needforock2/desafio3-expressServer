@@ -50,7 +50,7 @@ export default function PassReset() {
       },
     };
   
-    const url = "http://localhost:8080/api/auth/pass_reset";
+    const url = `${import.meta.env.VITE_BACKEND_URL}/auth/pass_reset`;
     try {
       const resp = await axios.post(url, loginData, config);
       swal({

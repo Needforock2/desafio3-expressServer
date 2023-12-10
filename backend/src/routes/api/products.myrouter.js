@@ -82,12 +82,12 @@ export default class ProductRouter extends MyRouter {
             nextPage,
           } = products;
           let nextLink = hasNextPage
-            ? `http://localhost:8080/api/products?limit=${limit}&page=${nextPage}${
+            ? `https://cachupines-backend.onrender.com/api/products?limit=${limit}&page=${nextPage}${
                 sort ? `&sort=${sort}` : ""
               }${query ? `&query=${queryType}=${queryValue}` : ""}`
             : null;
           let prevLink = hasPrevPage
-            ? `http://localhost:8080/api/products?limit=${limit}&page=${prevPage}${
+            ? `https://cachupines-backend.onrender.com/api/products?limit=${limit}&page=${prevPage}${
                 sort ? `&sort=${sort}` : ""
               }${query ? `&query=${queryType}=${queryValue}` : ""}`
             : null;

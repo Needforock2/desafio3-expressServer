@@ -1,7 +1,9 @@
 import { expect } from "chai";
 import supertest from "supertest";
 
-const requester = supertest(`http://localhost:8080/api`);
+const requester = supertest(
+  `https://cachupines-backend.onrender.com/api`
+);
 
 describe("Testeando Ecommerce", () => {
   describe("Testeando Flujo Usuario Premium + CRUD Products + CRUD Carrito", () => {

@@ -24,7 +24,7 @@ const [deleteP, setDeleteP] = useState(false)
     async function fetchProducts() {
       setLoadingProducts(true);
       try {
-        let url = "http://localhost:8080/api/products";
+        let url = `${import.meta.env.VITE_BACKEND_URL}/products`;
         if (edit) {
           url = url + "?edit=true";
         }
@@ -70,7 +70,9 @@ const [deleteP, setDeleteP] = useState(false)
   };
 
   const handleRandomClick = async (data) => {
-    const url = `http://localhost:8080/api/products?limit=6&page=${data}&title=${searchString}`;
+    const url = `${
+      import.meta.env.VITE_BACKEND_URL
+    }/products?limit=6&page=${data}&title=${searchString}`;
     try {
       const resp = await axios.get(url);
       setProducts(resp.data.payload);
@@ -91,7 +93,7 @@ const [deleteP, setDeleteP] = useState(false)
   const handleSearch = async (value) => {
     setSearchString(value);
 
-    const url = `http://localhost:8080/api/products?title=${value}`;
+    const url = `${import.meta.env.VITE_BACKEND_URL}/products?title=${value}`;
     try {
       const resp = await axios.get(url, { withCredentials: true });
       setProducts(resp.data.payload);

@@ -39,7 +39,7 @@ function NewProduct() {
 
   useEffect(() => {
         async function fetchProd() {
-          const url = `http://localhost:8080/api/products/${pid}`;
+          const url = `${import.meta.env.VITE_BACKEND_URL}/products/${pid}`;
           try {
             const resp = await axios.get(url);
             setProductEdit(resp.data);
@@ -71,7 +71,7 @@ function NewProduct() {
         "content-type": "application/json",
       },
     };
-    const url = "http://localhost:8080/api/products";
+    const url = `${import.meta.env.VITE_BACKEND_URL}/products`;
     try {
       const resp = await axios.post(url, productData, config);
       if (resp.data.status === "success") {
@@ -106,7 +106,7 @@ function NewProduct() {
          "content-type": "application/json",
        },
      };
-     const url = `http://localhost:8080/api/products/${pid}`;
+     const url = `${import.meta.env.VITE_BACKEND_URL}/products/${pid}`;
      try {
        const resp = await axios.put(url, productData, config);
        if (resp.data.success === true) {

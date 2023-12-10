@@ -1,5 +1,5 @@
 config:
-  target: http://localhost:8080/api
+  target: https://cachupines-backend.onrender.com/api
   phases:
     - duration: 30
       arrivalRate: 10

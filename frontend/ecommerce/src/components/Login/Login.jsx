@@ -43,7 +43,7 @@ export const Login = ({ successLogin, handleRegister, handleReset }) => {
   const handleGitHub = async (e) => {
     e.preventDefault();
     const popup = window.open(
-      "http://localhost:8080/api/auth/github",
+      `${import.meta.env.VITE_BACKEND_URL}/auth/github`,
       "targetWindow",
       `toolbar=no, location=no, status=no, menubar=no,scrollbars=yes,resizable=yes, width=620, height=700`
     );
@@ -69,7 +69,7 @@ export const Login = ({ successLogin, handleRegister, handleReset }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = "http://localhost:8080/api/auth/login";
+    const url = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
     try {
       const resp = await axios.post(url, loginData);
       successLogin();

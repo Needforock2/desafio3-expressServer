@@ -121,7 +121,7 @@ export default class AuthRouter extends MyRouter {
             { expiresIn: 60 * 60 }
           );
           let maskedToken = token.replace(/\./g, "*");
-          let message = `<h2>Sigue el siguiente enlace para reestablecer tu contraseña<h2> </br> <a href='http://localhost:5173/pass_reset/${maskedToken}'>Reestablecer contraseña</a>`;
+          let message = `<h2>Sigue el siguiente enlace para reestablecer tu contraseña<h2> </br> <a href='${process.env.FRONT_HOST}/pass_reset/${maskedToken}'>Reestablecer contraseña</a>`;
           await transporter.sendMail({
             from: `Cachupines.cl <${config.G_MAIL}>`,
             to: `${mail}`,
@@ -191,7 +191,7 @@ export default class AuthRouter extends MyRouter {
             <body>    
             </body>
             <script>
-                window.opener.postMessage(${session}, 'http://localhost:5173')
+                window.opener.postMessage(${session}, ${process.env.FRONT_HOST})
             </script>
             </html>`
           );

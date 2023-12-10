@@ -65,7 +65,7 @@ export const NavBar = () => {
   };
 
   const getUser = async () => {
-    const url2 = "http://localhost:8080/api/sessions/current";
+    const url2 = `${import.meta.env.VITE_BACKEND_URL}/sessions/current`;
     let user = "";
     try {
       const resp = await axios.get(url2);
@@ -93,7 +93,7 @@ export const NavBar = () => {
   useEffect(() => {}, [register]);
 
   const handleLogout = async () => {
-    const url = "http://localhost:8080/api/auth/logout";
+    const url = `${import.meta.env.VITE_BACKEND_URL}/auth/logout`;
     try {
       const resp = await axios.post(url);
       swal({
