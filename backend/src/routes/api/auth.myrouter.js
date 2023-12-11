@@ -56,6 +56,7 @@ export default class AuthRouter extends MyRouter {
           if (response) {
             return res
               .cookie("token", req.session.token, {
+                domain: `${process.env.FRONT_HOST}`,
                 maxAge: 60 * 60 * 25 * 7 * 1000,
                 httpOnly: true,
                 sameSite: "lax",
