@@ -59,7 +59,8 @@ export default class AuthRouter extends MyRouter {
                 domain: `https://prismatic-conkies-0cf372.netlify.app`,
                 maxAge: 60 * 60 * 25 * 7 * 1000,
                 httpOnly: true,
-                sameSite: "lax",
+                sameSite: "None",
+                secure: true
               })
               .sendSuccess({
                 session: req.session,
