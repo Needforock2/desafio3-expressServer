@@ -8,7 +8,7 @@ name = "cachuipines"
   runtime = "node"
 
   # Specify the build and start commands
-  build = "npm install"
+  install = "npm install"
   start = "node ./src/app.js --mode prod"
 
 # Define the databases if needed
