@@ -1,0 +1,21 @@
+# Set the name of your app
+name = "cachuipines"
+
+# Define the services
+[services]
+  [services.app]
+  # Set the runtime to "node"
+  runtime = "node"
+
+  # Specify the build and start commands
+  build = "npm install"
+  start = "node ./src/app.js --mode prod"
+
+# Define the databases if needed
+# [databases]
+#   [databases.example]
+#   # Specify the database type and version
+#   type = "postgresql"
+#   version = "13"
+
+# Additional configuration can be added based on your project needs
