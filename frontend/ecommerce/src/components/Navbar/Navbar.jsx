@@ -29,6 +29,7 @@ import { PassResetReq } from "../Pass_Reset/PassResetReq";
 import { CartContext } from "../../store/context";
 
 axios.defaults.withCredentials = true;
+axios.defaults.crossDomain = true;
 
 export const NavBar = () => {
   const theme = useTheme();

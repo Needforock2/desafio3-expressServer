@@ -2,8 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
+import axios from 'axios'
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
-
+axios.defaults.withCredentials = true;
+axios.defaults.crossDomain = true;
 const theme = extendTheme({
   colors: {
     custom: {
