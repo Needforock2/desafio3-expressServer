@@ -2,7 +2,7 @@ import { expect } from "chai";
 import supertest from "supertest";
 
 const requester = supertest(
-  `https://cachupines-backend.onrender.com/api`
+  `localhost:8080/api`
 );
 
 describe("Testeando Ecommerce", () => {
@@ -90,11 +90,11 @@ describe("Testeando Ecommerce", () => {
       let cart = {
         products: [
           {
-            product: "656d23555b977e21ef50f6d1",
+            product: "656d23565b977e21ef50f6d5",
             quantity: 2,
           },
           {
-            product: "656d23565b977e21ef50f6d3",
+            product: "656d23565b977e21ef50f6d7",
             quantity: 3,
           },
         ],

@@ -55,7 +55,7 @@ export default class AuthRouter extends MyRouter {
           let response = await authController.login();
           
           if (response) {
-            console.log(req.session.token);
+      
             return res
               .cookie("token", req.session.token, {
                // domain: [`https://prismatic-conkies-0cf372.netlify.app`,"localhost:8080/"],
@@ -102,6 +102,7 @@ export default class AuthRouter extends MyRouter {
       try {
         let response = await authController.changeRole(req.user._id);
         if (response) {
+          req.session.role = response.role
           return res.sendSuccess(response);
         }
       } catch (error) {

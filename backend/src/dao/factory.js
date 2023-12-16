@@ -15,7 +15,8 @@ switch (args.persistance) {
     const { default: ProductFs } = await import("./fs/products.fs.js");
      const { default: UserFs } = await import("./mongo/auth.mongo.js");
     const { default: CartFs } = await import("./fs/carts.fs.js");
-    dao = { Product: ProductFs , User: UserFs, Cart: CartFs };
+    const { default: TicketFs } = await import("./mongo/ticket.mongo.js");
+    dao = { Product: ProductFs , User: UserFs, Cart: CartFs, Ticket: TicketFs };
     break;
   default:
     const mongo = new MongoConnect(env.DATABASE_URL);

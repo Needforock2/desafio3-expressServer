@@ -17,7 +17,6 @@ export default class CartPersistance {
   // READ
   async readModel(cid) {
     const cartT = await Cart.find({ _id: cid })
-
     //Ordenamos los productos en base a Title
     const sortedProducts = cartT[0].products.sort((a, b) =>
       a.product.title.localeCompare(b.product.title)

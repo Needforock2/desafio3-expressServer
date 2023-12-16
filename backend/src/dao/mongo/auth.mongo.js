@@ -6,7 +6,7 @@ export default class AuthPersistance {
     let one = await User.findOne({ mail: data.mail });
     if (!one) {
       let name = data.first_name;
-      data.photo = `https://robohash.org/${name}`;
+      data.photo = data.photo || `https://robohash.org/${name}`;
       let user = await User.create(data);
       return {
         success: true,
@@ -40,12 +40,14 @@ export default class AuthPersistance {
         let resp = await User.findByIdAndUpdate(id, { role: 2 });
         return {
           success: true,
+          role: 2,
           message: `user ID: ${id} has been upgraded to PREMIUM`,
         };
       case 2:
         let resp2 = await User.findByIdAndUpdate(id, { role: 0 })        
         return {
           success: true,
+          role: 0,
           message: `user ID: ${id} has been degraded to USER`,
         };
     }

@@ -27,7 +27,7 @@ export default class ProductRouter extends MyRouter {
 
     //READ
     this.read("/", ["PUBLIC","PREMIUM", "ADMIN", ], async (req, res, next) => {
-     
+
       const { limit, page, query, title, sort, edit } = req.query;
       const options = {
         limit: limit ? limit : 6,
@@ -54,9 +54,10 @@ export default class ProductRouter extends MyRouter {
       if (title) {
         queryObject["title"] = { $regex: title, $options: "i" };
       }
-    
+      
       if (edit && req.session.role ===2) { 
         queryObject["owner"] = req.session.mail;
+        
       }
 
       try {

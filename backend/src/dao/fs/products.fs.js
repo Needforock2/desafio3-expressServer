@@ -26,13 +26,16 @@ export default class ProductFS {
   };
 
   createModel = async (product) => {
+   
+    product.status = true
+     console.log(product);
     try {
       const products = await this.readModel();
       if (
         !product.title ||
         !product.description ||
         !product.price ||
-        //!product.thumbnail ||
+        !product.thumbnails ||
         !product.stock ||
         !product.code ||
         !product.status
@@ -88,7 +91,7 @@ export default class ProductFS {
     productsArray[index] = productToEdit; // y lo metemos en el array
 
     await this.saveToFile(productsArray); // y guardamos el array en el archivo
-    return { status: "success", message: "product modified" };
+    return { success: "true", message: "product modified" };
   };
 
   destroyModel = async (id) => {
