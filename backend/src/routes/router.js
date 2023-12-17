@@ -51,7 +51,7 @@ export default class MyRouter {
           return res.sendNoAuthenticatedError();
         } else {
           const payload = jwt.verify(token, process.env.SECRET_TOKEN);
-
+          console.log("payload:", {payload})
           const user = await User.findOne({ mail: payload.email }, "mail role cart");
 
           const role = user.role;

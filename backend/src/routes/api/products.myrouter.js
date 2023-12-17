@@ -54,12 +54,12 @@ export default class ProductRouter extends MyRouter {
       if (title) {
         queryObject["title"] = { $regex: title, $options: "i" };
       }
-      
+      console.log("session", req.session)
       if (edit && req.session.role ===2) { 
         queryObject["owner"] = req.session.mail;
         
       }
-console.log("role", req.session.role)
+
       try {
         if (args.persistance === "FS") {
           const productsFS = await productsController.readController();

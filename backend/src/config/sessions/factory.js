@@ -7,7 +7,6 @@ import config from "../env.js";
 let sessions = null;
 
 switch (args.persistance) {
-    
   case "MEMORY":
     sessions = expressSession({
       secret: process.env.SECRET_SESSION,
@@ -15,8 +14,7 @@ switch (args.persistance) {
       saveUninitialized: false,
     });
     break;
-    case "FS":
-        
+  case "FS":
     const FileStore = sessionFileStore(expressSession);
     sessions = expressSession({
       store: new FileStore({
@@ -27,6 +25,7 @@ switch (args.persistance) {
       secret: config.SECRET_SESSION,
       resave: false,
       saveUninitialized: false,
+     
     });
 
     break;
@@ -39,6 +38,10 @@ switch (args.persistance) {
       secret: config.SECRET_SESSION,
       resave: false,
       saveUninitialized: false,
+      cookie: {
+        sameSite: "none",
+        secure: true,
+      },
     });
     break;
 }
