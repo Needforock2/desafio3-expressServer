@@ -35,12 +35,14 @@ switch (args.persistance) {
         mongoUrl: config.DATABASE_URL,
         ttl: 60 * 60 * 24 * 7,
       }),
+      name: "sessionId",
       secret: config.SECRET_SESSION,
       resave: false,
       saveUninitialized: false,
       cookie: {
         sameSite: "none",
-        secure: true,
+        httpOnly: false,
+        secure:true
       },
     });
     break;
