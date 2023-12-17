@@ -42,10 +42,10 @@ export default class MyRouter {
   };
   handlePolicies = (policies) => async (req, res, next) => {
     try {
-      if (policies.includes("PUBLIC")) {
+      const token = req.cookies.token;
+      if (policies.includes("PUBLIC") && !token) {
         return next();
-      } else {
-        const token = req.cookies.token;
+      } else {        
 
         if (!token) {
           return res.sendNoAuthenticatedError();

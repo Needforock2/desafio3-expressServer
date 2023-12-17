@@ -54,9 +54,9 @@ export default class ProductRouter extends MyRouter {
       if (title) {
         queryObject["title"] = { $regex: title, $options: "i" };
       }
-      console.log("session", req.session)
-      if (edit && req.session.role ===2) { 
-        queryObject["owner"] = req.session.mail;
+
+      if (edit && req.user.role ===2) { 
+        queryObject["owner"] = req.user.mail;
         
       }
 
