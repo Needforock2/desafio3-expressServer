@@ -62,6 +62,7 @@ export default class AuthRouter extends MyRouter {
                 maxAge: 60 * 60 * 25 * 7 * 1000,
                 //httpOnly: true,
                 sameSite: "none",
+                secure: true
               })
               .sendSuccess({
                 session: req.session,
