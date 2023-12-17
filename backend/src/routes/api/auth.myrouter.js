@@ -85,7 +85,12 @@ export default class AuthRouter extends MyRouter {
         try {
           req.session.destroy();
           await authController.logout();
-          res.cookie("token", "", { expires: new Date(0) });
+          res.cookie("token", "", {
+            expires: new Date(0),
+            httpOnly: true,
+            sameSite: "none",
+            secure: true,
+          });
           return res.sendSuccess({
             success: true,
             message: "sesion cerrada",
