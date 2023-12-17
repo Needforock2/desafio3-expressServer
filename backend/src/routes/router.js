@@ -4,7 +4,15 @@ import User from "../dao/mongo/models/user.js";
 import MyError from "../config/MyError.js";
 import errors from "../config/errors.js";
 
-const { notRegistered, authenticated, notFound, authorized, credentials, duplicate, expired } = errors;
+const {
+  notRegistered,
+  authenticated,
+  notFound,
+  authorized,
+  credentials,
+  duplicate,
+  expired,
+} = errors;
 
 export default class MyRouter {
   constructor() {
@@ -45,16 +53,18 @@ export default class MyRouter {
       const token = req.cookies.token;
       if (policies.includes("PUBLIC") && !token) {
         return next();
-      } else {        
-
+      } else {
         if (!token) {
           return res.sendNoAuthenticatedError();
         } else {
           const payload = jwt.verify(token, process.env.SECRET_TOKEN);
-          const user = await User.findOne({ mail: payload.email }, "mail role cart");
-
+          const user = await User.findOne(
+            { mail: payload.email },
+            "mail role cart"
+          );
           const role = user.role;
           if (
+            policies.includes("PUBLIC") ||
             (policies.includes("USER") && role === 0) ||
             (policies.includes("ADMIN") && role === 1) ||
             (policies.includes("PREMIUM") && role === 2)

@@ -11,7 +11,6 @@ export default class ProductPersistance {
     };
   }
   async readModel(query, options) {
-    console.log(query)
     const products = await Product.paginate(query, options);
     return products;
   }

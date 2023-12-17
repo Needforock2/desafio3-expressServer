@@ -90,7 +90,7 @@ export default class CartPersistance {
 
   async updateModel(data) {
     let { cid, pid } = data;
-    console.log(cid)
+
     const cart = await Cart.findOne({ _id: cid });
     const productObjectId = new ObjectId(pid);
     const productoExistente = cart.products.find(
