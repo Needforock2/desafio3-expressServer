@@ -59,7 +59,7 @@ export default class ProductRouter extends MyRouter {
         queryObject["owner"] = req.session.mail;
         
       }
-console.log(queryObject)
+console.log("role", req.session.role)
       try {
         if (args.persistance === "FS") {
           const productsFS = await productsController.readController();
