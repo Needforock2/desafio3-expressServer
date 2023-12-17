@@ -57,11 +57,11 @@ export default class AuthRouter extends MyRouter {
           if (response) {
       
             return res
-              .cookie("token", req.session.token, {
+              .cookie("token", req.token, {
                // domain: [`https://prismatic-conkies-0cf372.netlify.app`,"localhost:8080/"],
                 maxAge: 60 * 60 * 25 * 7 * 1000,
-                httpOnly: true,
-                sameSite: "Lax",
+                //httpOnly: true,
+                sameSite: "none",
               })
               .sendSuccess({
                 session: req.session,

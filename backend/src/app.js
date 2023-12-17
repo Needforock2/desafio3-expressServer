@@ -21,6 +21,7 @@ import swaggerJSDoc from "swagger-jsdoc"
 import { serve, setup } from "swagger-ui-express"
 import cluster from "cluster";
 import { cpus } from "os";
+import cors from 'cors'
 
 const numberOfProcess = cpus().length;
 
@@ -39,8 +40,8 @@ const ready = () => {
 
 const app = express();
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", `${process.env.FRONT_HOST}`); // Reemplaza con tu origen
+/* app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", `*`); // Reemplaza con tu origen
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
   res.header(
     "Access-Control-Allow-Headers",
@@ -49,6 +50,14 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
+ */
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
+
 
 app.use(
   compression({
